@@ -11,10 +11,10 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
   <div class="w-full flex flex-col items-center space-y-4">
     <!-- Song Title & Artist -->
     <div class="text-center space-y-1.5 px-2">
-      <h2 id="current-song-title" class="font-serif text-2xl sm:text-3xl md:text-4xl font-light text-[#f5f0e1] tracking-wide line-clamp-1 drop-shadow-md">
+      <h2 id="current-song-title" class="font-serif text-2xl sm:text-3xl md:text-4xl font-light text-[#f5f0e1] tracking-wide line-clamp-1 drop-shadow-md transition-opacity duration-300 ease-in-out">
         Iktara
       </h2>
-      <p id="current-song-artist" class="font-sans text-sm sm:text-base font-normal text-[#c9c3b0]/90 tracking-wide">
+      <p id="current-song-artist" class="font-sans text-sm sm:text-base font-normal text-[#c9c3b0]/90 tracking-wide transition-opacity duration-300 ease-in-out">
         Amit Trivedi, Kavita Seth
       </p>
     </div>
@@ -99,24 +99,28 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
       </button>
     </div>
 
-    <!-- Sub Controls: Track Index, Songs Drawer, Volume Control Slider -->
-    <div class="w-full flex items-center justify-between font-sans text-sm sm:text-base text-stone-300/85 pt-2 px-1">
-      <span id="track-index" class="font-sans text-xs sm:text-sm tracking-wider text-stone-300/70">
-        01 / 32
-      </span>
+    <!-- Sub Controls: Track Index + Songs Drawer Group (Option 2), Volume Control Slider -->
+    <div class="w-full flex items-end justify-between font-sans text-sm sm:text-base text-stone-300/85 pt-1 px-1">
+      <!-- Unified Stacked Playlist Group (01 / 32 over ☰) -->
+      <div class="flex flex-col items-center space-y-0.5">
+        <span id="track-index" class="font-sans text-[11px] sm:text-xs tracking-widest text-stone-400/70 font-mono select-none">
+          01 / 32
+        </span>
 
-      <button 
-        id="btn-playlist" 
-        class="font-sans hover:text-[#f5f0e1] transition-colors cursor-pointer text-sm sm:text-base tracking-wide border-b border-white/30 pb-0.5 hover:border-[#e2b170] flex items-center space-x-1.5"
-      >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h11"/>
-        </svg>
-        <!-- <span>Songs</span> -->
-      </button>
+        <button 
+          id="btn-playlist" 
+          title="Songs"
+          aria-label="Songs"
+          class="text-stone-300/80 hover:text-[#e2b170] transition-colors cursor-pointer p-1"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h11"/>
+          </svg>
+        </button>
+      </div>
 
       <!-- Volume Mute Toggle & Slider -->
-      <div class="flex items-center space-x-2">
+      <div class="flex items-center space-x-2 pb-1">
         <button 
           id="btn-mute" 
           aria-label="Mute or Unmute"
@@ -191,6 +195,7 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
   const prevBtn = document.getElementById('btn-prev');
   const nextBtn = document.getElementById('btn-next');
   const shuffleBtn = document.getElementById('btn-shuffle');
+  const drawerShuffleBtn = document.getElementById('drawer-btn-shuffle');
   const repeatBtn = document.getElementById('btn-repeat');
   const muteBtn = document.getElementById('btn-mute');
   const volumeSlider = document.getElementById('volume-slider');
@@ -203,6 +208,74 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
   const timeTotalEl = document.getElementById('time-total');
   const trackIndexEl = document.getElementById('track-index');
   const playlistBtn = document.getElementById('btn-playlist');
+
+  let shuffledQueue = [];
+  let shuffledIndexPosition = 0;
+
+  function generateShuffledQueue() {
+    const indices = Array.from({ length: SONGS.length }, (_, i) => i);
+    const remaining = indices.filter(i => i !== currentIndex);
+    for (let i = remaining.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [remaining[i], remaining[j]] = [remaining[j], remaining[i]];
+    }
+    shuffledQueue = [currentIndex, ...remaining];
+    shuffledIndexPosition = 0;
+  }
+
+  function syncShuffleUI() {
+    document.querySelectorAll('#btn-shuffle, #drawer-btn-shuffle').forEach(btn => {
+      btn.classList.toggle('text-[#e2b170]', isShuffle);
+      btn.classList.toggle('text-stone-400/80', !isShuffle);
+    });
+  }
+
+  function renderDrawerList() {
+    const container = document.getElementById('drawer-songs-list');
+    if (!container) return;
+
+    if (isShuffle && shuffledQueue.length === 0) {
+      generateShuffledQueue();
+    }
+
+    const indicesToRender = isShuffle
+      ? shuffledQueue
+      : Array.from({ length: SONGS.length }, (_, i) => i);
+
+    container.innerHTML = indicesToRender.map((songIndex, displayIdx) => {
+      const song = SONGS[songIndex];
+      return `
+        <button 
+          data-index="${songIndex}" 
+          class="drawer-song-item w-full text-left transition-all flex items-start space-x-3.5 cursor-pointer group py-0.5 border-b border-transparent"
+        >
+          <span class="drawer-song-num font-sans text-xs text-stone-500 group-hover:text-[#e2b170] pt-0.5 font-mono min-w-[20px]">
+            ${(displayIdx + 1).toString().padStart(2, '0')}
+          </span>
+          <div class="flex-1 min-w-0">
+            <p class="drawer-song-title font-serif text-[#f5f0e1] group-hover:text-[#e2b170] truncate font-light text-base leading-snug">
+              ${song.title}
+            </p>
+            <p class="drawer-song-artist font-sans text-xs text-stone-400/80 truncate mt-0.5">
+              ${song.artist}
+            </p>
+          </div>
+        </button>
+      `;
+    }).join('');
+
+    highlightActiveDrawerSong(currentIndex);
+  }
+
+  function toggleShuffleState() {
+    isShuffle = !isShuffle;
+    if (isShuffle) {
+      generateShuffledQueue();
+    }
+    syncShuffleUI();
+    renderDrawerList();
+    saveStateToLocalStorage();
+  }
 
   function saveStateToLocalStorage() {
     if (!isRestored) return;
@@ -231,10 +304,11 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
       const savedShuffle = localStorage.getItem(STORAGE_KEYS.IS_SHUFFLE);
       if (savedShuffle !== null) {
         isShuffle = savedShuffle === 'true';
-        if (shuffleBtn) {
-          shuffleBtn.classList.toggle('text-[#e2b170]', isShuffle);
-          shuffleBtn.classList.toggle('text-stone-400/80', !isShuffle);
+        if (isShuffle) {
+          generateShuffledSongs();
         }
+        syncShuffleUI();
+        renderDrawerList();
       }
 
       const savedRepeat = localStorage.getItem(STORAGE_KEYS.IS_REPEAT_SONG);
@@ -355,18 +429,15 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
 
     let nextIndex;
     if (isShuffle) {
-      if (maxTracks > 1) {
-        do {
-          nextIndex = Math.floor(Math.random() * maxTracks);
-        } while (nextIndex === currentIndex && maxTracks > 1);
+      if (shuffledQueue.length === 0 || shuffledIndexPosition >= shuffledQueue.length - 1) {
+        generateShuffledQueue();
+        shuffledIndexPosition = 1;
       } else {
-        nextIndex = 0;
+        shuffledIndexPosition++;
       }
+      nextIndex = shuffledQueue[shuffledIndexPosition];
     } else {
-      nextIndex = currentIndex + 1;
-      if (nextIndex >= maxTracks) {
-        nextIndex = 0;
-      }
+      nextIndex = (currentIndex + 1) % maxTracks;
     }
 
     if (typeof player.playVideoAt === 'function') {
@@ -378,10 +449,18 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     if (!player) return;
     isRestored = true;
     const maxTracks = SONGS.length;
-    let prevIndex = currentIndex - 1;
-    if (prevIndex < 0) {
-      prevIndex = maxTracks - 1;
+    let prevIndex;
+
+    if (isShuffle) {
+      if (shuffledQueue.length === 0) {
+        generateShuffledQueue();
+      }
+      shuffledIndexPosition = (shuffledIndexPosition - 1 + shuffledQueue.length) % shuffledQueue.length;
+      prevIndex = shuffledQueue[shuffledIndexPosition];
+    } else {
+      prevIndex = (currentIndex - 1 + maxTracks) % maxTracks;
     }
+
     if (typeof player.playVideoAt === 'function') {
       player.playVideoAt(prevIndex);
     }
@@ -415,6 +494,8 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     }, 1200);
   }
 
+  let lastDisplayedIndex = -1;
+
   function updateTrackInfo() {
     if (player && typeof player.getPlaylistIndex === 'function') {
       const idx = player.getPlaylistIndex();
@@ -424,8 +505,23 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     }
 
     const currentSong = SONGS[currentIndex] || SONGS[0];
-    if (songTitleEl) songTitleEl.innerText = currentSong.title;
-    if (songArtistEl) songArtistEl.innerText = currentSong.artist;
+
+    if (lastDisplayedIndex !== currentIndex) {
+      lastDisplayedIndex = currentIndex;
+      if (songTitleEl && songArtistEl) {
+        songTitleEl.classList.add('opacity-0');
+        songArtistEl.classList.add('opacity-0');
+        setTimeout(() => {
+          songTitleEl.innerText = currentSong.title;
+          songArtistEl.innerText = currentSong.artist;
+          songTitleEl.classList.remove('opacity-0');
+          songArtistEl.classList.remove('opacity-0');
+        }, 150);
+      } else {
+        if (songTitleEl) songTitleEl.innerText = currentSong.title;
+        if (songArtistEl) songArtistEl.innerText = currentSong.artist;
+      }
+    }
 
     updateTrackIndexDisplay();
     highlightActiveDrawerSong(currentIndex);
@@ -546,13 +642,13 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
 
   if (shuffleBtn) {
     shuffleBtn.addEventListener('click', () => {
-      isShuffle = !isShuffle;
-      if (player && typeof player.setShuffle === 'function') {
-        player.setShuffle(isShuffle);
-      }
-      shuffleBtn.classList.toggle('text-[#e2b170]', isShuffle);
-      shuffleBtn.classList.toggle('text-stone-400/80', !isShuffle);
-      saveStateToLocalStorage();
+      toggleShuffleState();
+    });
+  }
+
+  if (drawerShuffleBtn) {
+    drawerShuffleBtn.addEventListener('click', () => {
+      toggleShuffleState();
     });
   }
 
@@ -619,11 +715,23 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     const drawerEl = document.getElementById('playlist-drawer');
     const backdropEl = document.getElementById('drawer-backdrop');
     if (show) {
-      if (drawerEl) drawerEl.classList.remove('translate-x-full');
-      if (backdropEl) backdropEl.classList.remove('opacity-0', 'pointer-events-none');
+      if (drawerEl) {
+        drawerEl.classList.remove('opacity-0', 'translate-x-5', 'pointer-events-none');
+        drawerEl.classList.add('opacity-100', 'translate-x-0', 'pointer-events-auto');
+      }
+      if (backdropEl) {
+        backdropEl.classList.remove('opacity-0', 'pointer-events-none');
+        backdropEl.classList.add('opacity-100', 'pointer-events-auto');
+      }
     } else {
-      if (drawerEl) drawerEl.classList.add('translate-x-full');
-      if (backdropEl) backdropEl.classList.add('opacity-0', 'pointer-events-none');
+      if (drawerEl) {
+        drawerEl.classList.remove('opacity-100', 'translate-x-0', 'pointer-events-auto');
+        drawerEl.classList.add('opacity-0', 'translate-x-5', 'pointer-events-none');
+      }
+      if (backdropEl) {
+        backdropEl.classList.remove('opacity-100', 'pointer-events-auto');
+        backdropEl.classList.add('opacity-0', 'pointer-events-none');
+      }
     }
   }
 
@@ -635,14 +743,26 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
   }
 
   document.addEventListener('click', (e) => {
+    const shuffleTrigger = e.target.closest('#btn-shuffle, #drawer-btn-shuffle');
+    if (shuffleTrigger) {
+      e.preventDefault();
+      toggleShuffleState();
+      return;
+    }
+
     const songItem = e.target.closest('.drawer-song-item');
     if (songItem) {
       e.preventDefault();
       const idx = parseInt(songItem.getAttribute('data-index') || '0', 10);
+      if (isShuffle) {
+        const foundPos = shuffledQueue.indexOf(idx);
+        if (foundPos !== -1) {
+          shuffledIndexPosition = foundPos;
+        }
+      }
       if (player && typeof player.playVideoAt === 'function') {
         isRestored = true;
         player.playVideoAt(idx);
-        toggleDrawer(false);
       }
       return;
     }

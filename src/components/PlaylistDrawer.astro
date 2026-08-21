@@ -3,12 +3,24 @@ import { SONGS } from '../data/songs';
 ---
 <aside 
   id="playlist-drawer" 
-  class="fixed inset-y-0 right-0 w-full max-w-[340px] bg-[#090b10]/80 backdrop-blur-xs border-l border-white/10 text-stone-200 z-40 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col shadow-2xl select-none"
+  class="fixed inset-y-0 right-0 w-full max-w-[340px] bg-[#090b10]/80 border-l border-white/10 text-stone-200 z-40 opacity-0 translate-x-5 pointer-events-none transition-all duration-300 ease-in-out flex flex-col shadow-2xl select-none"
   aria-label="Playlist Drawer"
 >
   <!-- Drawer Header -->
   <div class="px-6 py-5 border-b border-white/10 flex items-center justify-between">
-    <h2 class="font-serif text-xl sm:text-2xl text-[#f5f0e1] font-light tracking-wide">Songs</h2>
+    <div class="flex items-center space-x-3">
+      <h2 class="font-serif text-xl sm:text-2xl text-[#f5f0e1] font-light tracking-wide">Songs</h2>
+      <button 
+        id="drawer-btn-shuffle" 
+        title="Shuffle List"
+        aria-label="Toggle Shuffle List"
+        class="text-stone-400/80 hover:text-[#e2b170] transition-colors cursor-pointer p-1"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>
+        </svg>
+      </button>
+    </div>
     <button 
       id="close-drawer-btn" 
       aria-label="Close Playlist"
@@ -46,7 +58,7 @@ import { SONGS } from '../data/songs';
   </div>
 </aside>
 
-<!-- Overlay Backdrop -->
+<!-- Overlay Backdrop: Dims and blurs background photo behind drawer -->
 <div 
   id="drawer-backdrop" 
   class="fixed inset-0 bg-black/35 backdrop-blur-xs z-30 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out"
@@ -59,13 +71,25 @@ import { SONGS } from '../data/songs';
       const backdrop = document.getElementById('drawer-backdrop');
 
       function openDrawer() {
-        if (drawer) drawer.classList.remove('translate-x-full');
-        if (backdrop) backdrop.classList.remove('opacity-0', 'pointer-events-none');
+        if (drawer) {
+          drawer.classList.remove('opacity-0', 'translate-x-5', 'pointer-events-none');
+          drawer.classList.add('opacity-100', 'translate-x-0', 'pointer-events-auto');
+        }
+        if (backdrop) {
+          backdrop.classList.remove('opacity-0', 'pointer-events-none');
+          backdrop.classList.add('opacity-100', 'pointer-events-auto');
+        }
       }
 
       function closeDrawer() {
-        if (drawer) drawer.classList.add('translate-x-full');
-        if (backdrop) backdrop.classList.add('opacity-0', 'pointer-events-none');
+        if (drawer) {
+          drawer.classList.remove('opacity-100', 'translate-x-0', 'pointer-events-auto');
+          drawer.classList.add('opacity-0', 'translate-x-5', 'pointer-events-none');
+        }
+        if (backdrop) {
+          backdrop.classList.remove('opacity-100', 'pointer-events-auto');
+          backdrop.classList.add('opacity-0', 'pointer-events-none');
+        }
       }
 
       document.addEventListener('click', function(e) {

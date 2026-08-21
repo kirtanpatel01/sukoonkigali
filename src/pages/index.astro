@@ -3,9 +3,41 @@ import '../styles/global.css';
 import Background from '../components/Background.astro';
 import MusicPlayer from '../components/MusicPlayer.astro';
 import PlaylistDrawer from '../components/PlaylistDrawer.astro';
+import { SONGS } from '../data/songs';
 
-const pageTitle = "Sukoon Ki Gali";
-const pageDescription = "A quiet corner of the internet with peaceful songs for when you need to slow down.";
+const pageTitle = "Sukoon Ki Gali — Peaceful Songs & Music Collection";
+const pageDescription = "A quiet corner of the internet with a peaceful collection of curated songs for when you need to slow down.";
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://sukoonkigali.com').href;
+const ogImageURL = new URL('/bg.png', Astro.site || 'https://sukoonkigali.com').href;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://sukoonkigali.com/#website",
+      "url": "https://sukoonkigali.com/",
+      "name": "Sukoon Ki Gali",
+      "description": pageDescription,
+      "inLanguage": "en"
+    },
+    {
+      "@type": "MusicPlaylist",
+      "@id": "https://sukoonkigali.com/#playlist",
+      "name": "Sukoon Ki Gali Collection",
+      "numTracks": SONGS.length,
+      "track": SONGS.map((song, index) => ({
+        "@type": "MusicRecording",
+        "position": index + 1,
+        "name": song.title,
+        "byArtist": {
+          "@type": "MusicGroup",
+          "name": song.artist
+        }
+      }))
+    }
+  ]
+};
 ---
 
 <!DOCTYPE html>
@@ -16,21 +48,35 @@ const pageDescription = "A quiet corner of the internet with peaceful songs for 
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#08090c" />
 
+    <!-- Primary Meta Tags -->
     <title>{pageTitle}</title>
+    <meta name="title" content={pageTitle} />
     <meta name="description" content={pageDescription} />
+    <link rel="canonical" href={canonicalURL} />
 
-    <!-- Open Graph / Social -->
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDescription} />
-    <meta property="og:image" content="/bg.png" />
+    <meta property="og:image" content={ogImageURL} />
+
+    <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
     <meta property="twitter:title" content={pageTitle} />
     <meta property="twitter:description" content={pageDescription} />
-    <meta property="twitter:image" content="/bg.png" />
+    <meta property="twitter:image" content={ogImageURL} />
+
+    <!-- Structured Data (JSON-LD) for Google & AI Search Engines -->
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
   </head>
   <body class="h-full w-full relative flex flex-col justify-end items-center pb-8 pt-4 px-4 select-none overflow-hidden text-stone-200 bg-[#08090c]">
+    <!-- Accessible H1 for SEO Crawlers -->
+    <h1 class="sr-only">Sukoon Ki Gali — Peaceful Songs & Music Collection</h1>
+
     <!-- Unobstructed Photographic Background -->
     <Background />
 
