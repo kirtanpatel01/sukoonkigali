@@ -1,17 +1,45 @@
 ---
+import '../styles/global.css';
+import Background from '../components/Background.astro';
+import MusicPlayer from '../components/MusicPlayer.astro';
+import PlaylistDrawer from '../components/PlaylistDrawer.astro';
 
+const pageTitle = "Sukoon Ki Gali";
+const pageDescription = "A quiet corner of the internet with peaceful songs for when you need to slow down.";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<!DOCTYPE html>
+<html lang="en" class="h-full w-full">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:image" content="/bg.png" />
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content={pageTitle} />
+    <meta property="twitter:description" content={pageDescription} />
+    <meta property="twitter:image" content="/bg.png" />
+  </head>
+  <body class="h-full w-full relative flex flex-col justify-end items-center pb-8 pt-4 px-4 select-none overflow-hidden text-stone-200 bg-[#08090c]">
+    <!-- Unobstructed Photographic Background -->
+    <Background />
+
+    <!-- Minimal Integrated Player Console (Placed directly into the photo) -->
+    <main class="relative z-10 w-full flex flex-col items-center justify-end">
+      <MusicPlayer />
+    </main>
+
+    <!-- Playlist Drawer -->
+    <PlaylistDrawer />
+  </body>
 </html>
