@@ -3,6 +3,8 @@ import '../styles/global.css';
 import Background from '../components/Background.astro';
 import MusicPlayer from '../components/MusicPlayer.astro';
 import PlaylistDrawer from '../components/PlaylistDrawer.astro';
+import FeedbackModal from '../components/FeedbackModal.astro';
+import CreatorFooter from '../components/CreatorFooter.astro';
 import { SONGS } from '../data/songs';
 
 const pageTitle = "Sukoon Ki Gali — Peaceful Songs & Music Collection";
@@ -128,5 +130,11 @@ const structuredData = {
 
     <!-- Playlist Drawer -->
     <PlaylistDrawer />
+
+    <!-- Feedback Modal & Trigger -->
+    <FeedbackModal />
+
+    <!-- Subtle Creator Credit -->
+    <CreatorFooter />
   </body>
 </html>

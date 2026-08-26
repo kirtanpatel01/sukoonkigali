@@ -20,14 +20,31 @@ import { SONGS } from '../data/songs';
           <path stroke-linecap="round" stroke-linejoin="round" d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>
         </svg>
       </button>
+      <button 
+        id="drawer-feedback-btn" 
+        title="Suggest a song"
+        aria-label="Suggest a song"
+        class="text-stone-400/80 hover:text-[#e2b170] transition-colors cursor-pointer p-1 text-xs flex items-center space-x-1 border-l border-white/10 pl-2 ml-1"
+      >
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+        </svg>
+        <span class="font-sans text-[11px] tracking-wider hidden sm:inline">Suggest</span>
+      </button>
     </div>
-    <button 
-      id="close-drawer-btn" 
-      aria-label="Close Playlist"
-      class="text-stone-400 hover:text-[#f5f0e1] transition-colors p-1 cursor-pointer text-lg leading-none"
-    >
-      ✕
-    </button>
+    <div class="relative group">
+      <button 
+        id="close-drawer-btn" 
+        aria-label="Close Playlist"
+        class="text-stone-400 hover:text-[#f5f0e1] transition-colors p-1 cursor-pointer text-lg leading-none focus:outline-none"
+      >
+        ✕
+      </button>
+      <div class="pointer-events-none absolute -bottom-9 right-0 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-all duration-200 z-30 hidden md:flex items-center space-x-1.5 px-2 py-0.5 rounded-lg bg-[#090b10]/95 backdrop-blur-md border border-white/15 text-[11px] font-sans text-stone-200 shadow-xl whitespace-nowrap">
+        <span>Close</span>
+        <kbd class="px-1.5 py-0.5 rounded text-[10px] bg-white/10 border border-white/20 font-mono text-[#e2b170] uppercase">Esc</kbd>
+      </div>
+    </div>
   </div>
 
   <!-- Songs List: Printed / Handwritten aesthetic with tight, restrained spacing -->
@@ -53,18 +70,42 @@ import { SONGS } from '../data/songs';
   </div>
 
   <!-- Drawer Footer: Minimal Divider + Counter + PWA Install -->
-  <div class="px-6 py-4 border-t border-white/10 flex items-center justify-between font-sans text-xs text-stone-400/80 tracking-wider">
-    <span id="drawer-counter-text">1 of {SONGS.length}</span>
-    <button
-      id="pwa-install-btn"
-      class="hidden px-2.5 py-1 rounded bg-[#e2b170]/15 hover:bg-[#e2b170]/30 text-[#e2b170] border border-[#e2b170]/30 transition-all cursor-pointer items-center space-x-1.5"
-      title="Install App"
-    >
-      <svg class="w-3.5 h-3.5 inline-block" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-      </svg>
-      <span>Install App</span>
-    </button>
+  <div class="px-6 py-3 border-t border-white/10 flex flex-col space-y-2 font-sans text-xs text-stone-400/80 tracking-wider">
+    <div class="flex items-center justify-between w-full">
+      <span id="drawer-counter-text">1 of {SONGS.length}</span>
+      <button
+        id="pwa-install-btn"
+        class="hidden px-2.5 py-1 rounded bg-[#e2b170]/15 hover:bg-[#e2b170]/30 text-[#e2b170] border border-[#e2b170]/30 transition-all cursor-pointer items-center space-x-1.5"
+        title="Install App"
+      >
+        <svg class="w-3.5 h-3.5 inline-block" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+        </svg>
+        <span>Install App</span>
+      </button>
+    </div>
+
+    <!-- Creator Info -->
+    <div class="pt-2 border-t border-white/5 flex items-center justify-between text-[11px] text-stone-500 font-normal tracking-normal">
+      <span class="text-stone-400/80">Kirtan Patel</span>
+      <div class="flex items-center space-x-2.5">
+        <a 
+          href="https://github.com/kirtanpatel01/sukoonkigali" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="hover:text-[#e2b170] transition-colors"
+          aria-label="GitHub Repository"
+        >GitHub</a>
+        <span class="text-stone-700">•</span>
+        <a 
+          href="https://instagram.com/kjpatel.dev" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="hover:text-[#e2b170] transition-colors"
+          aria-label="Instagram Profile"
+        >@kjpatel.dev</a>
+      </div>
+    </div>
   </div>
 </aside>
 
