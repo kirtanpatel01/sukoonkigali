@@ -3,11 +3,11 @@ import { SONGS } from '../data/songs';
 ---
 <aside 
   id="playlist-drawer" 
-  class="fixed inset-y-0 right-0 w-full max-w-[340px] bg-[#090b10]/80 border-l border-white/10 text-stone-200 z-40 opacity-0 translate-x-5 pointer-events-none transition-all duration-300 ease-in-out flex flex-col shadow-2xl select-none"
+  class="fixed inset-y-0 right-0 w-full max-w-[385px] sm:max-w-[420px] bg-[#090b10]/95 backdrop-blur-2xl border-l border-white/10 text-stone-200 z-40 opacity-0 translate-x-5 pointer-events-none transition-all duration-300 ease-in-out flex flex-col shadow-2xl"
   aria-label="Playlist Drawer"
 >
   <!-- Drawer Header -->
-  <div class="px-6 py-5 border-b border-white/10 flex items-center justify-between">
+  <div class="px-6 py-4 border-b border-white/10 flex items-center justify-between">
     <div class="flex items-center space-x-3">
       <h2 class="font-serif text-xl sm:text-2xl text-[#f5f0e1] font-light tracking-wide">Songs</h2>
       <button 
@@ -20,36 +20,12 @@ import { SONGS } from '../data/songs';
           <path stroke-linecap="round" stroke-linejoin="round" d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>
         </svg>
       </button>
-      <button 
-        id="drawer-feedback-btn" 
-        title="Suggest a song"
-        aria-label="Suggest a song"
-        class="text-stone-400/80 hover:text-[#e2b170] transition-colors cursor-pointer p-1 text-xs flex items-center space-x-1 border-l border-white/10 pl-2 ml-1"
-      >
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
-        </svg>
-        <span class="font-sans text-[11px] tracking-wider hidden sm:inline">Suggest</span>
-      </button>
-      <a 
-        href="https://youtube.com/playlist?list=PLUKBMAqy5FT0&si=AXqRjl8h_BcCJjnq" 
-        target="_blank" 
-        rel="noopener noreferrer"
-        title="Open Playlist on YouTube"
-        aria-label="Open Playlist on YouTube"
-        class="text-stone-400/80 hover:text-red-400 transition-colors cursor-pointer p-1 text-xs flex items-center space-x-1 border-l border-white/10 pl-2 ml-1"
-      >
-        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-        </svg>
-        <span class="font-sans text-[11px] tracking-wider hidden sm:inline">YouTube</span>
-      </a>
     </div>
     <div class="relative group">
       <button 
         id="close-drawer-btn" 
         aria-label="Close Playlist"
-        class="text-stone-400 hover:text-[#f5f0e1] transition-colors p-1 cursor-pointer text-lg leading-none focus:outline-none"
+        class="text-stone-400 hover:text-[#f5f0e1] transition-colors p-1.5 cursor-pointer text-lg leading-none focus:outline-none"
       >
         ✕
       </button>
@@ -60,12 +36,40 @@ import { SONGS } from '../data/songs';
     </div>
   </div>
 
-  <!-- Songs List: Printed / Handwritten aesthetic with tight, restrained spacing -->
-  <div id="drawer-songs-list" class="flex-1 overflow-y-auto custom-scrollbar px-6 py-5 space-y-3.5 font-sans">
+  <!-- Search Input inside Drawer -->
+  <div class="px-6 py-3 border-b border-white/10 bg-white/[0.02]">
+    <div class="relative flex items-center">
+      <svg class="w-4 h-4 text-stone-400 absolute left-3.5 pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+      </svg>
+      <input 
+        type="text" 
+        id="drawer-search-input" 
+        placeholder="Search 106 songs or artists..." 
+        class="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-8 py-2 text-xs sm:text-sm text-[#f5f0e1] placeholder-stone-500/80 focus:outline-none focus:ring-1 focus:ring-[#e2b170]/70 focus:border-[#e2b170]/80 transition-all font-sans" 
+      />
+      <button 
+        id="drawer-search-clear" 
+        class="hidden absolute right-3 text-stone-400 hover:text-stone-200 text-xs p-1 cursor-pointer" 
+        aria-label="Clear search"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+
+  <!-- Songs List: Smooth Touch Scrollable Container -->
+  <div 
+    id="drawer-songs-list" 
+    class="flex-1 overflow-y-auto custom-scrollbar px-6 py-4 space-y-3 font-sans touch-pan-y"
+    style="-webkit-overflow-scrolling: touch; touch-action: pan-y;"
+  >
     {SONGS.map((song, index) => (
       <button 
         data-index={index} 
-        class="drawer-song-item w-full text-left transition-all flex items-start space-x-3.5 cursor-pointer group py-0.5 border-b border-transparent"
+        data-title={song.title.toLowerCase()}
+        data-artist={song.artist.toLowerCase()}
+        class="drawer-song-item w-full text-left transition-all flex items-start space-x-3.5 cursor-pointer group py-1 border-b border-white/5"
       >
         <span class="drawer-song-num font-sans text-xs text-stone-500 group-hover:text-[#e2b170] pt-0.5 font-mono min-w-[20px]">
           {(index + 1).toString().padStart(2, '0')}
@@ -80,52 +84,24 @@ import { SONGS } from '../data/songs';
         </div>
       </button>
     ))}
+
+    <!-- Empty Search Results Message -->
+    <div id="drawer-no-results" class="hidden text-center py-8 text-stone-400 text-xs font-sans">
+      No songs match your search.
+    </div>
   </div>
 
-  <!-- Drawer Footer: Minimal Divider + Counter + PWA Install -->
-  <div class="px-6 py-3 border-t border-white/10 flex flex-col space-y-2 font-sans text-xs text-stone-400/80 tracking-wider">
-    <div class="flex items-center justify-between w-full">
-      <span id="drawer-counter-text">1 of {SONGS.length}</span>
-      <button
-        id="pwa-install-btn"
-        class="hidden px-2.5 py-1 rounded bg-[#e2b170]/15 hover:bg-[#e2b170]/30 text-[#e2b170] border border-[#e2b170]/30 transition-all cursor-pointer items-center space-x-1.5"
-        title="Install App"
-      >
-        <svg class="w-3.5 h-3.5 inline-block" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-        </svg>
-        <span>Install App</span>
-      </button>
-    </div>
-
-    <!-- Creator Info -->
-    <div class="pt-2 border-t border-white/5 flex items-center justify-between text-[11px] text-stone-500 font-normal tracking-normal">
-      <span class="text-stone-400/80">Kirtan Patel</span>
-      <div class="flex items-center space-x-2.5">
-        <a 
-          href="https://github.com/kirtanpatel01/sukoonkigali" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          class="hover:text-[#e2b170] transition-colors"
-          aria-label="GitHub Repository"
-        >GitHub</a>
-        <span class="text-stone-700">•</span>
-        <a 
-          href="https://instagram.com/kjpatel.dev" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          class="hover:text-[#e2b170] transition-colors"
-          aria-label="Instagram Profile"
-        >@kjpatel.dev</a>
-      </div>
-    </div>
+  <!-- Drawer Footer: Minimal Divider + Counter -->
+  <div class="px-6 py-3 border-t border-white/10 flex items-center justify-between font-sans text-xs text-stone-400/80 tracking-wider">
+    <span id="drawer-counter-text">1 of {SONGS.length}</span>
+    <span class="text-[11px] text-stone-500 font-mono">{SONGS.length} Songs</span>
   </div>
 </aside>
 
 <!-- Overlay Backdrop: Dims and blurs background photo behind drawer -->
 <div 
   id="drawer-backdrop" 
-  class="fixed inset-0 bg-black/35 backdrop-blur-xs z-30 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out"
+  class="fixed inset-0 bg-black/40 backdrop-blur-xs z-30 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out cursor-pointer"
 ></div>
 
 <script is:inline>
@@ -133,25 +109,10 @@ import { SONGS } from '../data/songs';
     function setupDrawer() {
       const drawer = document.getElementById('playlist-drawer');
       const backdrop = document.getElementById('drawer-backdrop');
-      const installBtn = document.getElementById('pwa-install-btn');
-
-      if (installBtn) {
-        if (window.deferredPWAInstallPrompt) {
-          installBtn.classList.remove('hidden');
-          installBtn.classList.add('flex');
-        }
-        installBtn.addEventListener('click', async function() {
-          if (window.deferredPWAInstallPrompt) {
-            window.deferredPWAInstallPrompt.prompt();
-            const choice = await window.deferredPWAInstallPrompt.userChoice;
-            if (choice && choice.outcome === 'accepted') {
-              installBtn.classList.add('hidden');
-              installBtn.classList.remove('flex');
-            }
-            window.deferredPWAInstallPrompt = null;
-          }
-        });
-      }
+      const searchInput = document.getElementById('drawer-search-input');
+      const searchClear = document.getElementById('drawer-search-clear');
+      const songItems = document.querySelectorAll('.drawer-song-item');
+      const noResults = document.getElementById('drawer-no-results');
 
       function openDrawer() {
         if (drawer) {
@@ -161,10 +122,6 @@ import { SONGS } from '../data/songs';
         if (backdrop) {
           backdrop.classList.remove('opacity-0', 'pointer-events-none');
           backdrop.classList.add('opacity-100', 'pointer-events-auto');
-        }
-        if (installBtn && window.deferredPWAInstallPrompt) {
-          installBtn.classList.remove('hidden');
-          installBtn.classList.add('flex');
         }
       }
 
@@ -179,6 +136,50 @@ import { SONGS } from '../data/songs';
         }
       }
 
+      // Real-time Song Search Filtering
+      if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+          const query = (e.target.value || '').toLowerCase().trim();
+          let matchCount = 0;
+
+          if (query.length > 0) {
+            if (searchClear) searchClear.classList.remove('hidden');
+          } else {
+            if (searchClear) searchClear.classList.add('hidden');
+          }
+
+          songItems.forEach(item => {
+            const title = item.getAttribute('data-title') || '';
+            const artist = item.getAttribute('data-artist') || '';
+            if (title.includes(query) || artist.includes(query)) {
+              item.classList.remove('hidden');
+              matchCount++;
+            } else {
+              item.classList.add('hidden');
+            }
+          });
+
+          if (noResults) {
+            if (matchCount === 0) {
+              noResults.classList.remove('hidden');
+            } else {
+              noResults.classList.add('hidden');
+            }
+          }
+        });
+      }
+
+      if (searchClear) {
+        searchClear.addEventListener('click', function() {
+          if (searchInput) {
+            searchInput.value = '';
+            searchInput.dispatchEvent(new Event('input'));
+            searchInput.focus();
+          }
+        });
+      }
+
+      // Close drawer on backdrop click or anywhere outside
       document.addEventListener('click', function(e) {
         const playlistBtn = e.target.closest('#btn-playlist');
         if (playlistBtn) {
@@ -186,7 +187,14 @@ import { SONGS } from '../data/songs';
           openDrawer();
           return;
         }
-        if (e.target.closest('#close-drawer-btn') || e.target === backdrop) {
+
+        const isDrawerOpen = drawer && drawer.classList.contains('opacity-100');
+        if (!isDrawerOpen) return;
+
+        const closeBtn = e.target.closest('#close-drawer-btn');
+        const isOutsideDrawer = !drawer.contains(e.target);
+
+        if (closeBtn || e.target === backdrop || isOutsideDrawer) {
           closeDrawer();
         }
       });

@@ -5,6 +5,7 @@ import MusicPlayer from '../components/MusicPlayer.astro';
 import PlaylistDrawer from '../components/PlaylistDrawer.astro';
 import FeedbackModal from '../components/FeedbackModal.astro';
 import CreatorFooter from '../components/CreatorFooter.astro';
+import MobileInstallBtn from '../components/MobileInstallBtn.astro';
 import { SONGS } from '../data/songs';
 
 const pageTitle = "Sukoon Ki Gali — Peaceful Songs & Music Collection";
@@ -54,6 +55,10 @@ const structuredData = {
 
       gtag('config', 'G-BHQR4VXQ9X');
     </script>
+
+    <!-- Cloudflare Web Analytics -->
+    <script is:inline type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "4d5548e1c821427a8b8ed344d43d1861"}'></script>
+    <!-- End Cloudflare Web Analytics -->
 
     <meta charset="utf-8" />
     <link rel="icon" type="image/png" href="/favicon.png" />
@@ -133,6 +138,9 @@ const structuredData = {
 
     <!-- Feedback Modal & Trigger -->
     <FeedbackModal />
+
+    <!-- Top-Right Mobile Install App Button -->
+    <MobileInstallBtn />
 
     <!-- Subtle Creator Credit -->
     <CreatorFooter />

@@ -1,0 +1,74 @@
+---
+---
+
+<!-- Top-Right Corner PWA Install Button (Prominent on Mobile) -->
+<div class="fixed top-4 right-4 z-20">
+  <button
+    id="mobile-pwa-install-btn"
+    class="flex items-center space-x-1.5 font-sans text-xs text-[#090b10] bg-[#e2b170] hover:bg-[#ebd09b] border border-[#e2b170] backdrop-blur-md px-3.5 py-2 rounded-full shadow-xl transition-all cursor-pointer active:scale-95 font-medium tracking-wide sm:hidden"
+    title="Install Sukoon Ki Gali App"
+    aria-label="Install Sukoon Ki Gali App"
+  >
+    <svg class="w-4 h-4 text-[#090b10]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+    </svg>
+    <span>Install App</span>
+  </button>
+</div>
+
+<!-- iOS / Browser PWA Install Instructions Toast -->
+<div 
+  id="pwa-ios-toast" 
+  class="fixed top-16 right-4 left-4 sm:left-auto sm:w-80 bg-[#090b10]/95 border border-[#e2b170]/40 rounded-2xl p-4 text-stone-200 z-50 shadow-2xl text-xs space-y-2 hidden backdrop-blur-2xl transition-all"
+>
+  <div class="flex items-start justify-between">
+    <span class="font-serif text-sm text-[#f5f0e1] font-medium">Install Sukoon Ki Gali</span>
+    <button id="pwa-ios-toast-close" class="text-stone-400 hover:text-white text-sm p-1">✕</button>
+  </div>
+  <p class="text-stone-300/90 leading-relaxed font-sans">
+    Tap the <strong class="text-[#e2b170]">Share</strong> button in your browser, then tap <strong class="text-[#e2b170]">'Add to Home Screen'</strong> to install the app on your device.
+  </p>
+</div>
+
+<script is:inline>
+  (function() {
+    function setupMobileInstall() {
+      const topInstallBtn = document.getElementById('mobile-pwa-install-btn');
+      const iosToast = document.getElementById('pwa-ios-toast');
+      const iosToastClose = document.getElementById('pwa-ios-toast-close');
+
+      if (iosToastClose && iosToast) {
+        iosToastClose.addEventListener('click', () => {
+          iosToast.classList.add('hidden');
+        });
+      }
+
+      if (topInstallBtn) {
+        topInstallBtn.addEventListener('click', async function() {
+          if (window.deferredPWAInstallPrompt) {
+            window.deferredPWAInstallPrompt.prompt();
+            const choice = await window.deferredPWAInstallPrompt.userChoice;
+            if (choice && choice.outcome === 'accepted') {
+              topInstallBtn.classList.add('hidden');
+            }
+            window.deferredPWAInstallPrompt = null;
+          } else {
+            // Show iOS / Browser Add to Home Screen instructions toast
+            if (iosToast) {
+              iosToast.classList.remove('hidden');
+              setTimeout(() => {
+                if (iosToast) iosToast.classList.add('hidden');
+              }, 9000);
+            }
+          }
+        });
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupMobileInstall);
+    } else {
+      setupMobileInstall();
+    }
+  })();
+</script>
