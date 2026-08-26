@@ -359,19 +359,16 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
   };
 
   function initPlayer() {
+    const currentSong = SONGS[currentIndex] || SONGS[0];
     player = new window.YT.Player('yt-player-container', {
       height: '100%',
       width: '100%',
+      videoId: currentSong.youtubeId,
       playerVars: {
-        listType: 'playlist',
-        list: PLAYLIST_ID,
-        index: initialSavedIndex,
-        startSeconds: Math.floor(initialSavedTime),
         autoplay: 0,
         controls: 0,
         modestbranding: 1,
         rel: 0,
-        loop: 1,
         playsinline: 1
       },
       events: {
@@ -382,20 +379,27 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     });
   }
 
+  function playTrackAtIndex(index, startSecs = 0) {
+    if (index < 0 || index >= SONGS.length) index = 0;
+    currentIndex = index;
+    isRestored = true;
+    const song = SONGS[currentIndex];
+    
+    if (player && typeof player.loadVideoById === 'function') {
+      player.loadVideoById({
+        videoId: song.youtubeId,
+        startSeconds: startSecs
+      });
+    }
+    updateTrackInfo();
+  }
+
   function onPlayerReady(event) {
     restoreStateFromLocalStorage();
 
     const savedVol = parseInt(localStorage.getItem(STORAGE_KEYS.VOLUME) || '80', 10);
     player.setVolume(savedVol);
     if (isMuted) player.mute();
-
-    if (initialSavedIndex > 0) {
-      if (typeof player.playVideoAt === 'function') {
-        player.playVideoAt(initialSavedIndex);
-      }
-    } else {
-      try { player.playVideo(); } catch (e) {}
-    }
 
     if (initialSavedTime > 0) {
       const checkSeek = setInterval(() => {
@@ -440,9 +444,7 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
       nextIndex = (currentIndex + 1) % maxTracks;
     }
 
-    if (typeof player.playVideoAt === 'function') {
-      player.playVideoAt(nextIndex);
-    }
+    playTrackAtIndex(nextIndex);
   }
 
   function playPrevTrack() {
@@ -461,9 +463,7 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
       prevIndex = (currentIndex - 1 + maxTracks) % maxTracks;
     }
 
-    if (typeof player.playVideoAt === 'function') {
-      player.playVideoAt(prevIndex);
-    }
+    playTrackAtIndex(prevIndex);
   }
 
   function onPlayerStateChange(event) {
@@ -497,13 +497,6 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
   let lastDisplayedIndex = -1;
 
   function updateTrackInfo() {
-    if (player && typeof player.getPlaylistIndex === 'function') {
-      const idx = player.getPlaylistIndex();
-      if (typeof idx === 'number' && idx >= 0 && idx < SONGS.length) {
-        currentIndex = idx;
-      }
-    }
-
     const currentSong = SONGS[currentIndex] || SONGS[0];
 
     if (lastDisplayedIndex !== currentIndex) {
@@ -569,11 +562,8 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     document.querySelectorAll('.drawer-song-item').forEach(btn => {
       btn.addEventListener('click', () => {
         const idx = parseInt(btn.getAttribute('data-index') || '0', 10);
-        if (player && typeof player.playVideoAt === 'function') {
-          isRestored = true;
-          player.playVideoAt(idx);
-          toggleDrawer(false);
-        }
+        playTrackAtIndex(idx);
+        toggleDrawer(false);
       });
     });
     highlightActiveDrawerSong(currentIndex);
@@ -640,17 +630,7 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     });
   }
 
-  if (shuffleBtn) {
-    shuffleBtn.addEventListener('click', () => {
-      toggleShuffleState();
-    });
-  }
 
-  if (drawerShuffleBtn) {
-    drawerShuffleBtn.addEventListener('click', () => {
-      toggleShuffleState();
-    });
-  }
 
   if (repeatBtn) {
     repeatBtn.addEventListener('click', () => {
