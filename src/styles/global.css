@@ -17,7 +17,6 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    user-select: none;
   }
 }
 
@@ -106,5 +105,13 @@ input[type="range"]::-moz-range-thumb:hover {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Hide install buttons automatically when launched as an installed PWA */
+@media (display-mode: standalone) {
+  #mobile-pwa-install-btn,
+  #pwa-install-btn {
+    display: none !important;
   }
 }

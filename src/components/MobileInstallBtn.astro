@@ -1,7 +1,7 @@
 ---
 ---
 
-<!-- Top-Right Corner PWA Install Button (Prominent on Mobile) -->
+<!-- Top-Right Corner PWA Install Button (Prominent on Mobile, Hidden when Installed) -->
 <div class="fixed top-4 right-4 z-20">
   <button
     id="mobile-pwa-install-btn"
@@ -32,10 +32,25 @@
 
 <script is:inline>
   (function() {
+    function checkIsPWAInstalled() {
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                           window.navigator.standalone === true || 
+                           document.referrer.includes('android-app://');
+      const isLocalStorageMarked = localStorage.getItem('sukoon_pwa_installed') === 'true';
+      return isStandalone || isLocalStorageMarked;
+    }
+
     function setupMobileInstall() {
       const topInstallBtn = document.getElementById('mobile-pwa-install-btn');
       const iosToast = document.getElementById('pwa-ios-toast');
       const iosToastClose = document.getElementById('pwa-ios-toast-close');
+
+      // Hide button immediately if already installed or running as standalone app
+      if (checkIsPWAInstalled() && topInstallBtn) {
+        topInstallBtn.classList.add('hidden');
+        topInstallBtn.classList.remove('flex');
+        return;
+      }
 
       if (iosToastClose && iosToast) {
         iosToastClose.addEventListener('click', () => {
@@ -49,7 +64,9 @@
             window.deferredPWAInstallPrompt.prompt();
             const choice = await window.deferredPWAInstallPrompt.userChoice;
             if (choice && choice.outcome === 'accepted') {
+              localStorage.setItem('sukoon_pwa_installed', 'true');
               topInstallBtn.classList.add('hidden');
+              topInstallBtn.classList.remove('flex');
             }
             window.deferredPWAInstallPrompt = null;
           } else {
@@ -63,6 +80,15 @@
           }
         });
       }
+
+      // Listen for successful native app installation
+      window.addEventListener('appinstalled', () => {
+        localStorage.setItem('sukoon_pwa_installed', 'true');
+        if (topInstallBtn) {
+          topInstallBtn.classList.add('hidden');
+          topInstallBtn.classList.remove('flex');
+        }
+      });
     }
 
     if (document.readyState === 'loading') {
