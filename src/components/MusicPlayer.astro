@@ -2,8 +2,8 @@
 import { PLAYLIST_ID, SONGS } from '../data/songs';
 ---
 <div class="w-full max-w-lg mx-auto px-4 z-20 flex flex-col items-center select-none text-stone-200">
-  <!-- Compliant YouTube IFrame API Embed (Offscreen container) -->
-  <div class="fixed top-0 left-0 w-1 h-1 opacity-0 pointer-events-none -z-50 overflow-hidden">
+  <!-- Compliant YouTube IFrame API Embed (200x200 Offscreen for Mobile HTML5 Video compliance) -->
+  <div class="fixed bottom-0 right-0 w-[200px] h-[200px] opacity-0 pointer-events-none -z-50 overflow-hidden" aria-hidden="true">
     <div id="yt-player-container"></div>
   </div>
 
@@ -434,8 +434,15 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     restoreStateFromLocalStorage();
 
     const savedVol = parseInt(localStorage.getItem(STORAGE_KEYS.VOLUME) || '80', 10);
-    player.setVolume(savedVol);
-    if (isMuted) player.mute();
+    if (player && typeof player.setVolume === 'function') player.setVolume(savedVol);
+    if (isMuted && player && typeof player.mute === 'function') player.mute();
+
+    if (pendingPlayOnReady) {
+      pendingPlayOnReady = false;
+      if (player && typeof player.playVideo === 'function') {
+        player.playVideo();
+      }
+    }
 
     if (initialSavedTime > 0) {
       const checkSeek = setInterval(() => {
@@ -642,26 +649,51 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     });
   }
 
-  // Control Listeners
+  // Mobile & Touch Gesture Control Listeners
+  let pendingPlayOnReady = false;
+
+  function togglePlayState() {
+    if (!player || typeof player.playVideo !== 'function') {
+      pendingPlayOnReady = true;
+      loadYTAPI();
+      return;
+    }
+    if (isPlaying) {
+      player.pauseVideo();
+    } else {
+      player.playVideo();
+    }
+  }
+
+  function bindTouchAndClick(element, handler) {
+    if (!element) return;
+    let handledByTouch = false;
+    element.addEventListener('touchend', (e) => {
+      handledByTouch = true;
+      e.preventDefault();
+      handler(e);
+      setTimeout(() => { handledByTouch = false; }, 400);
+    });
+    element.addEventListener('click', (e) => {
+      if (handledByTouch) return;
+      handler(e);
+    });
+  }
+
   if (playBtn) {
-    playBtn.addEventListener('click', () => {
-      if (!player) return;
-      if (isPlaying) {
-        player.pauseVideo();
-      } else {
-        player.playVideo();
-      }
+    bindTouchAndClick(playBtn, () => {
+      togglePlayState();
     });
   }
 
   if (prevBtn) {
-    prevBtn.addEventListener('click', () => {
+    bindTouchAndClick(prevBtn, () => {
       playPrevTrack();
     });
   }
 
   if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
+    bindTouchAndClick(nextBtn, () => {
       playNextTrack();
     });
   }

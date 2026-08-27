@@ -2,7 +2,7 @@
 
 > A quiet corner of the internet with a peaceful, mood-driven collection of curated songs for when you need to slow down.
 
-[Sukoon Ki Gali](https://sukoonkigali.com) is an open-source web application designed as a serene, intimate listening experience. Built around a curated selection of Indian and Hindi music, the app provides a calm photographic interface free from social clutter, ads, or distraction.
+[Sukoon Ki Gali](https://sukoonkigali.kjpatel.me) is an open-source web application designed as a serene, intimate listening experience. Built around a curated selection of Indian and Hindi music, the app provides a calm photographic interface free from social clutter, ads, or distraction.
 
 ---
 

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sukoonkigali.com/sitemap.xml
+Sitemap: https://sukoonkigali.kjpatel.me/sitemap.xml

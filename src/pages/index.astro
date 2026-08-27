@@ -10,23 +10,23 @@ import { SONGS } from '../data/songs';
 
 const pageTitle = "Sukoon Ki Gali — Peaceful Songs & Music Collection";
 const pageDescription = "A quiet corner of the internet with a peaceful collection of curated songs for when you need to slow down.";
-const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://sukoonkigali.com').href;
-const ogImageURL = new URL('/bg.png', Astro.site || 'https://sukoonkigali.com').href;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://sukoonkigali.kjpatel.me').href;
+const ogImageURL = new URL('/bg.png', Astro.site || 'https://sukoonkigali.kjpatel.me').href;
 
 const structuredData = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "WebSite",
-      "@id": "https://sukoonkigali.com/#website",
-      "url": "https://sukoonkigali.com/",
+      "@id": "https://sukoonkigali.kjpatel.me/#website",
+      "url": "https://sukoonkigali.kjpatel.me/",
       "name": "Sukoon Ki Gali",
       "description": pageDescription,
       "inLanguage": "en"
     },
     {
       "@type": "MusicPlaylist",
-      "@id": "https://sukoonkigali.com/#playlist",
+      "@id": "https://sukoonkigali.kjpatel.me/#playlist",
       "name": "Sukoon Ki Gali Collection",
       "numTracks": SONGS.length,
       "track": SONGS.map((song, index) => ({
