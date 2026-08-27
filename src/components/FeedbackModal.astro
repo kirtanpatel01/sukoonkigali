@@ -78,25 +78,29 @@
         <label class="block text-[10px] font-sans font-medium tracking-wider text-stone-400/80 uppercase">
           What would you like to suggest?
         </label>
+        <input type="hidden" name="feedback_type" id="feedback-type-hidden" value="Add a song" />
         <div class="grid grid-cols-3 gap-2">
-          <label class="feedback-type-pill cursor-pointer">
-            <input type="radio" name="feedback_type" value="Add a song" checked class="sr-only" />
-            <span class="block text-center py-2 px-2 text-xs font-sans rounded-xl border transition-all bg-white/10 text-[#f5f0e1] border-white/20 font-medium shadow-xs">
-              ＋ Add a song
-            </span>
-          </label>
-          <label class="feedback-type-pill cursor-pointer">
-            <input type="radio" name="feedback_type" value="Remove a song" class="sr-only" />
-            <span class="block text-center py-2 px-2 text-xs font-sans rounded-xl border border-white/5 transition-all text-stone-400/80 hover:text-stone-200 hover:border-white/15 bg-transparent">
-              − Remove a song
-            </span>
-          </label>
-          <label class="feedback-type-pill cursor-pointer">
-            <input type="radio" name="feedback_type" value="Something else" class="sr-only" />
-            <span class="block text-center py-2 px-2 text-xs font-sans rounded-xl border border-white/5 transition-all text-stone-400/80 hover:text-stone-200 hover:border-white/15 bg-transparent">
-              Other
-            </span>
-          </label>
+          <button 
+            type="button" 
+            data-value="Add a song"
+            class="feedback-type-btn py-2 px-2 text-xs font-sans rounded-xl border transition-all cursor-pointer text-center bg-white/10 text-[#f5f0e1] border-white/20 font-medium shadow-xs focus:outline-none"
+          >
+            ＋ Add a song
+          </button>
+          <button 
+            type="button" 
+            data-value="Remove a song"
+            class="feedback-type-btn py-2 px-2 text-xs font-sans rounded-xl border transition-all cursor-pointer text-center border-white/5 text-stone-400/80 hover:text-stone-200 hover:border-white/15 bg-transparent focus:outline-none"
+          >
+            − Remove a song
+          </button>
+          <button 
+            type="button" 
+            data-value="Something else"
+            class="feedback-type-btn py-2 px-2 text-xs font-sans rounded-xl border transition-all cursor-pointer text-center border-white/5 text-stone-400/80 hover:text-stone-200 hover:border-white/15 bg-transparent focus:outline-none"
+          >
+            Other
+          </button>
         </div>
       </div>
 
@@ -239,37 +243,44 @@
         }
       }
 
-      // Dynamic placeholder & pill styling when feedback_type radio changes
-      const typeInputs = document.querySelectorAll('input[name="feedback_type"]');
-      typeInputs.forEach(input => {
-        input.addEventListener('change', function() {
-          typeInputs.forEach(inp => {
-            const span = inp.nextElementSibling;
-            if (!span) return;
-            if (inp.checked) {
-              span.className = "block text-center py-2 px-2 text-xs font-sans rounded-xl border transition-all bg-white/10 text-[#f5f0e1] border-white/20 font-medium shadow-xs";
-            } else {
-              span.className = "block text-center py-2 px-2 text-xs font-sans rounded-xl border border-white/5 transition-all text-stone-400/80 hover:text-stone-200 hover:border-white/15 bg-transparent";
-            }
-          });
+      // Dynamic placeholder & pill styling when feedback_type choice changes
+      const typeBtns = document.querySelectorAll('.feedback-type-btn');
+      const hiddenTypeInput = document.getElementById('feedback-type-hidden');
 
-          const selectedType = document.querySelector('input[name="feedback_type"]:checked')?.value;
-          if (reasonInput) {
-            if (selectedType === 'Remove a song') {
-              reasonInput.placeholder = "What feels out of place about it?";
-            } else if (selectedType === 'Something else') {
-              reasonInput.placeholder = "Tell us what's on your mind...";
-            } else {
-              reasonInput.placeholder = "What makes it belong here?";
-            }
-          }
-
-          if (selectedType === 'Something else') {
-            if (songTitleStar) songTitleStar.classList.add('hidden');
+      function selectFeedbackType(value) {
+        if (hiddenTypeInput) hiddenTypeInput.value = value;
+        typeBtns.forEach(btn => {
+          const val = btn.getAttribute('data-value');
+          if (val === value) {
+            btn.className = "feedback-type-btn py-2 px-2 text-xs font-sans rounded-xl border transition-all cursor-pointer text-center bg-white/10 text-[#f5f0e1] border-white/20 font-medium shadow-xs focus:outline-none";
           } else {
-            if (songTitleStar) songTitleStar.classList.remove('hidden');
+            btn.className = "feedback-type-btn py-2 px-2 text-xs font-sans rounded-xl border transition-all cursor-pointer text-center border-white/5 text-stone-400/80 hover:text-stone-200 hover:border-white/15 bg-transparent focus:outline-none";
           }
-          if (errorSongTitle) errorSongTitle.classList.add('hidden');
+        });
+
+        if (reasonInput) {
+          if (value === 'Remove a song') {
+            reasonInput.placeholder = "What feels out of place about it?";
+          } else if (value === 'Something else') {
+            reasonInput.placeholder = "Tell us what's on your mind...";
+          } else {
+            reasonInput.placeholder = "What makes it belong here?";
+          }
+        }
+
+        if (value === 'Something else') {
+          if (songTitleStar) songTitleStar.classList.add('hidden');
+        } else {
+          if (songTitleStar) songTitleStar.classList.remove('hidden');
+        }
+        if (errorSongTitle) errorSongTitle.classList.add('hidden');
+      }
+
+      typeBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const val = btn.getAttribute('data-value');
+          selectFeedbackType(val);
         });
       });
 
@@ -285,12 +296,7 @@
         if (submitSpinner) submitSpinner.classList.add('hidden');
         isSubmitting = false;
 
-        // Reset radio pills to default "Add a song"
-        const firstRadio = document.querySelector('input[name="feedback_type"][value="Add a song"]');
-        if (firstRadio) {
-          firstRadio.checked = true;
-          firstRadio.dispatchEvent(new Event('change'));
-        }
+        selectFeedbackType('Add a song');
       }
 
       // Event listeners for triggers

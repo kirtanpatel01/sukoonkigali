@@ -644,35 +644,20 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     }
   }
 
-  function bindTouchAndClick(element, handler) {
-    if (!element) return;
-    let handledByTouch = false;
-    element.addEventListener('touchend', (e) => {
-      handledByTouch = true;
-      e.preventDefault();
-      handler(e);
-      setTimeout(() => { handledByTouch = false; }, 400);
-    });
-    element.addEventListener('click', (e) => {
-      if (handledByTouch) return;
-      handler(e);
-    });
-  }
-
   if (playBtn) {
-    bindTouchAndClick(playBtn, () => {
+    playBtn.addEventListener('click', () => {
       togglePlayState();
     });
   }
 
   if (prevBtn) {
-    bindTouchAndClick(prevBtn, () => {
+    prevBtn.addEventListener('click', () => {
       playPrevTrack();
     });
   }
 
   if (nextBtn) {
-    bindTouchAndClick(nextBtn, () => {
+    nextBtn.addEventListener('click', () => {
       playNextTrack();
     });
   }
