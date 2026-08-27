@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sukoon-kigali-v4';
+const CACHE_NAME = 'sukoon-kigali-v5';
 const STATIC_ASSETS = [
   '/',
   '/manifest.webmanifest',
