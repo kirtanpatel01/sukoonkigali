@@ -51,7 +51,7 @@ The songs in this project are synchronized with the official YouTube playlist:
 - **Audio & Video Engine**: [YouTube IFrame Player API](https://developers.google.com/youtube/iframe_api_reference)
 - **Form Submissions**: [Formspree](https://formspree.io)
 - **Fonts**: Cormorant Garamond & Plus Jakarta Sans (Google Fonts)
-- **PWA Capabilities**: Web App Manifest (`manifest.webmanifest`), custom Service Worker (`sw.js`), and 192x192 / 512x512 maskable app icons
+- **PWA Capabilities**: Web App Manifest (`manifest.webmanifest`), custom Service Worker (`sw.js`), standalone maskable adaptive Android PWA icons (`icon-maskable-192.png` / `icon-maskable-512.png`), and iOS app icons
 
 ---
 

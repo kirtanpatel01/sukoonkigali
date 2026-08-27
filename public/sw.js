@@ -1,10 +1,12 @@
-const CACHE_NAME = 'sukoon-kigali-v1';
+const CACHE_NAME = 'sukoon-kigali-v2';
 const STATIC_ASSETS = [
   '/',
   '/manifest.webmanifest',
   '/favicon.png',
   '/icon-192.png',
   '/icon-512.png',
+  '/icon-maskable-192.png',
+  '/icon-maskable-512.png',
   '/bg.png',
   '/api/playlist.json'
 ];
