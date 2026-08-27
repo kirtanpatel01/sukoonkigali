@@ -68,25 +68,42 @@ import { SONGS } from '../data/songs';
     style="-webkit-overflow-scrolling: touch; touch-action: pan-y;"
   >
     {SONGS.map((song, index) => (
-      <button 
-        type="button"
+      <div 
         data-index={index} 
+        data-youtube-id={song.youtubeId}
         data-title={song.title.toLowerCase()}
         data-artist={song.artist.toLowerCase()}
-        class="drawer-song-item w-full text-left transition-all flex items-start space-x-3.5 cursor-pointer group py-1 border-b border-white/5"
+        class="drawer-song-item w-full text-left transition-all flex items-center justify-between space-x-3 cursor-pointer group py-1.5 border-b border-white/5"
       >
-        <span class="drawer-song-num font-sans text-xs text-stone-500 group-hover:text-[#e2b170] pt-0.5 font-mono min-w-[20px]">
-          {(index + 1).toString().padStart(2, '0')}
-        </span>
-        <div class="flex-1 min-w-0">
-          <p class="drawer-song-title font-serif text-[#f5f0e1] group-hover:text-[#e2b170] truncate font-light text-base leading-snug">
-            {song.title}
-          </p>
-          <p class="drawer-song-artist font-sans text-xs text-stone-400/80 truncate mt-0.5">
-            {song.artist}
-          </p>
+        <div class="flex items-start space-x-3.5 flex-1 min-w-0 drawer-song-click-area">
+          <span class="drawer-song-num font-sans text-xs text-stone-500 group-hover:text-[#e2b170] pt-0.5 font-mono min-w-[20px]">
+            {(index + 1).toString().padStart(2, '0')}
+          </span>
+          <div class="flex-1 min-w-0">
+            <p class="drawer-song-title font-serif text-[#f5f0e1] group-hover:text-[#e2b170] truncate font-light text-base leading-snug">
+              {song.title}
+            </p>
+            <p class="drawer-song-artist font-sans text-xs text-stone-400/80 truncate mt-0.5">
+              {song.artist}
+            </p>
+          </div>
         </div>
-      </button>
+        <label 
+          class="exclude-checkbox-label relative flex items-center justify-center p-1.5 cursor-pointer group/checkbox select-none flex-shrink-0" 
+          title="Exclude song"
+        >
+          <input 
+            type="checkbox" 
+            class="exclude-song-checkbox sr-only" 
+            data-youtube-id={song.youtubeId} 
+          />
+          <div class="checkbox-box w-4 h-4 rounded border border-stone-500/60 group-hover/checkbox:border-[#e2b170] transition-colors flex items-center justify-center bg-black/20">
+            <svg class="checkbox-check w-3 h-3 text-[#e2b170] hidden" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+            </svg>
+          </div>
+        </label>
+      </div>
     ))}
 
     <!-- Empty Search Results Message -->

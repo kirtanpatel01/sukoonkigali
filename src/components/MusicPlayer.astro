@@ -173,6 +173,7 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
   let progressInterval = null;
   let currentIndex = 0;
   let isRestored = false;
+  let isDraggingProgress = false;
 
   const STORAGE_KEYS = {
     TRACK_INDEX: 'skg_track_index',
@@ -180,8 +181,46 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     VOLUME: 'skg_volume',
     IS_MUTED: 'skg_is_muted',
     IS_SHUFFLE: 'skg_is_shuffle',
-    IS_REPEAT_SONG: 'skg_is_repeat_song'
+    IS_REPEAT_SONG: 'skg_is_repeat_song',
+    EXCLUDED_SONGS: 'skg_excluded_songs'
   };
+
+  let excludedSongIds = new Set((function() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.EXCLUDED_SONGS);
+      if (saved) {
+        const arr = JSON.parse(saved);
+        if (Array.isArray(arr)) return new Set(arr);
+      }
+    } catch (e) {}
+    return new Set();
+  })());
+
+  function isSongExcluded(youtubeId) {
+    return youtubeId ? excludedSongIds.has(youtubeId) : false;
+  }
+
+  function toggleExcludeSong(youtubeId) {
+    if (!youtubeId) return;
+    if (excludedSongIds.has(youtubeId)) {
+      excludedSongIds.delete(youtubeId);
+    } else {
+      excludedSongIds.add(youtubeId);
+    }
+    try {
+      localStorage.setItem(STORAGE_KEYS.EXCLUDED_SONGS, JSON.stringify(Array.from(excludedSongIds)));
+    } catch (e) {}
+
+    if (isShuffle) {
+      generateShuffledQueue();
+    }
+    renderDrawerList();
+
+    const currentSong = SONGS[currentIndex];
+    if (currentSong && isSongExcluded(currentSong.youtubeId)) {
+      playNextTrack();
+    }
+  }
 
   const initialSavedIndex = (function() {
     try {
@@ -229,7 +268,10 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
 
   function generateShuffledQueue() {
     const indices = Array.from({ length: SONGS.length }, (_, i) => i);
-    const remaining = indices.filter(i => i !== currentIndex);
+    const available = indices.filter(i => !isSongExcluded(SONGS[i].youtubeId));
+    const validIndices = available.length > 0 ? available : indices;
+
+    const remaining = validIndices.filter(i => i !== currentIndex);
     for (let i = remaining.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [remaining[i], remaining[j]] = [remaining[j], remaining[i]];
@@ -259,23 +301,43 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
 
     container.innerHTML = indicesToRender.map((songIndex, displayIdx) => {
       const song = SONGS[songIndex];
+      const isExcluded = isSongExcluded(song.youtubeId);
       return `
-        <button 
+        <div 
           data-index="${songIndex}" 
-          class="drawer-song-item w-full text-left transition-all flex items-start space-x-3.5 cursor-pointer group py-0.5 border-b border-transparent"
+          data-youtube-id="${song.youtubeId}"
+          class="drawer-song-item w-full text-left transition-all flex items-center justify-between space-x-3 cursor-pointer group py-1.5 border-b border-transparent ${isExcluded ? 'opacity-40 line-through decoration-stone-500' : ''}"
         >
-          <span class="drawer-song-num font-sans text-xs text-stone-500 group-hover:text-[#e2b170] pt-0.5 font-mono min-w-[20px]">
-            ${(displayIdx + 1).toString().padStart(2, '0')}
-          </span>
-          <div class="flex-1 min-w-0">
-            <p class="drawer-song-title font-serif text-[#f5f0e1] group-hover:text-[#e2b170] truncate font-light text-base leading-snug">
-              ${song.title}
-            </p>
-            <p class="drawer-song-artist font-sans text-xs text-stone-400/80 truncate mt-0.5">
-              ${song.artist}
-            </p>
+          <div class="flex items-start space-x-3.5 flex-1 min-w-0 drawer-song-click-area">
+            <span class="drawer-song-num font-sans text-xs text-stone-500 group-hover:text-[#e2b170] pt-0.5 font-mono min-w-[20px]">
+              ${(displayIdx + 1).toString().padStart(2, '0')}
+            </span>
+            <div class="flex-1 min-w-0">
+              <p class="drawer-song-title font-serif text-[#f5f0e1] group-hover:text-[#e2b170] truncate font-light text-base leading-snug">
+                ${song.title}
+              </p>
+              <p class="drawer-song-artist font-sans text-xs text-stone-400/80 truncate mt-0.5">
+                ${song.artist}
+              </p>
+            </div>
           </div>
-        </button>
+          <label 
+            class="exclude-checkbox-label relative flex items-center justify-center p-1.5 cursor-pointer group/checkbox select-none flex-shrink-0" 
+            title="${isExcluded ? 'Re-include song' : 'Exclude song'}"
+          >
+            <input 
+              type="checkbox" 
+              class="exclude-song-checkbox sr-only" 
+              data-youtube-id="${song.youtubeId}"
+              ${isExcluded ? 'checked' : ''} 
+            />
+            <div class="checkbox-box w-4 h-4 rounded border ${isExcluded ? 'border-[#e2b170] bg-[#e2b170]/20' : 'border-stone-500/60 bg-black/20'} group-hover/checkbox:border-[#e2b170] transition-all flex items-center justify-center">
+              <svg class="checkbox-check w-3 h-3 text-[#e2b170] ${isExcluded ? '' : 'hidden'}" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+              </svg>
+            </div>
+          </label>
+        </div>
       `;
     }).join('');
 
@@ -421,16 +483,20 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
       if (player && typeof player.playVideo === 'function') {
         player.playVideo();
       }
+    } else {
+      if (player && typeof player.pauseVideo === 'function') {
+        player.pauseVideo();
+      }
     }
 
     if (initialSavedTime > 0) {
-      const checkSeek = setInterval(() => {
-        if (player && typeof player.seekTo === 'function') {
-          player.seekTo(initialSavedTime, true);
-          clearInterval(checkSeek);
-        }
-      }, 300);
-      setTimeout(() => clearInterval(checkSeek), 2500);
+      if (player && typeof player.cueVideoById === 'function') {
+        const song = SONGS[currentIndex] || SONGS[0];
+        player.cueVideoById({
+          videoId: song.youtubeId,
+          startSeconds: initialSavedTime
+        });
+      }
     }
 
     setTimeout(() => {
@@ -453,7 +519,7 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
       return;
     }
 
-    let nextIndex;
+    let nextIndex = currentIndex;
     if (isShuffle) {
       if (shuffledQueue.length === 0 || shuffledIndexPosition >= shuffledQueue.length - 1) {
         generateShuffledQueue();
@@ -461,9 +527,20 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
       } else {
         shuffledIndexPosition++;
       }
-      nextIndex = shuffledQueue[shuffledIndexPosition];
+      nextIndex = shuffledQueue[shuffledIndexPosition] !== undefined ? shuffledQueue[shuffledIndexPosition] : (currentIndex + 1) % maxTracks;
     } else {
-      nextIndex = (currentIndex + 1) % maxTracks;
+      let step = 1;
+      let found = false;
+      while (step <= maxTracks) {
+        const candidate = (currentIndex + step) % maxTracks;
+        if (!isSongExcluded(SONGS[candidate].youtubeId)) {
+          nextIndex = candidate;
+          found = true;
+          break;
+        }
+        step++;
+      }
+      if (!found) nextIndex = (currentIndex + 1) % maxTracks;
     }
 
     playTrackAtIndex(nextIndex);
@@ -473,16 +550,27 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     if (!player) return;
     isRestored = true;
     const maxTracks = SONGS.length;
-    let prevIndex;
+    let prevIndex = currentIndex;
 
     if (isShuffle) {
       if (shuffledQueue.length === 0) {
         generateShuffledQueue();
       }
       shuffledIndexPosition = (shuffledIndexPosition - 1 + shuffledQueue.length) % shuffledQueue.length;
-      prevIndex = shuffledQueue[shuffledIndexPosition];
+      prevIndex = shuffledQueue[shuffledIndexPosition] !== undefined ? shuffledQueue[shuffledIndexPosition] : (currentIndex - 1 + maxTracks) % maxTracks;
     } else {
-      prevIndex = (currentIndex - 1 + maxTracks) % maxTracks;
+      let step = 1;
+      let found = false;
+      while (step <= maxTracks) {
+        const candidate = (currentIndex - step + maxTracks) % maxTracks;
+        if (!isSongExcluded(SONGS[candidate].youtubeId)) {
+          prevIndex = candidate;
+          found = true;
+          break;
+        }
+        step++;
+      }
+      if (!found) prevIndex = (currentIndex - 1 + maxTracks) % maxTracks;
     }
 
     playTrackAtIndex(prevIndex);
@@ -562,9 +650,9 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
       if (!player || typeof player.getCurrentTime !== 'function') return;
       const current = player.getCurrentTime() || 0;
       const duration = player.getDuration() || 0;
-      if (timeCurrentEl) timeCurrentEl.innerText = formatTime(current);
+      if (!isDraggingProgress && timeCurrentEl) timeCurrentEl.innerText = formatTime(current);
       if (timeTotalEl) timeTotalEl.innerText = formatTime(duration);
-      if (duration > 0 && progressSlider) {
+      if (duration > 0 && progressSlider && !isDraggingProgress) {
         const val = (current / duration) * 100;
         progressSlider.value = val;
         updateSliderTrackFill(progressSlider, val);
@@ -712,15 +800,38 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
   }
 
   if (progressSlider) {
-    progressSlider.addEventListener('input', (e) => {
+    const handleSliderStart = () => {
+      isDraggingProgress = true;
+    };
+
+    const handleSliderInput = (e) => {
+      isDraggingProgress = true;
       const pct = parseFloat(e.target.value);
+      updateSliderTrackFill(progressSlider, pct);
+      if (!player || typeof player.getDuration !== 'function') return;
+      const duration = player.getDuration() || 0;
+      const seekTo = (pct / 100) * duration;
+      if (timeCurrentEl) timeCurrentEl.innerText = formatTime(seekTo);
+    };
+
+    const handleSliderEnd = () => {
+      if (!isDraggingProgress) return;
+      isDraggingProgress = false;
+      const pct = parseFloat(progressSlider.value);
       updateSliderTrackFill(progressSlider, pct);
       if (!player || typeof player.getDuration !== 'function') return;
       const duration = player.getDuration() || 0;
       const seekTo = (pct / 100) * duration;
       player.seekTo(seekTo, true);
       saveTimePositionToLocalStorage(seekTo);
-    });
+    };
+
+    progressSlider.addEventListener('mousedown', handleSliderStart);
+    progressSlider.addEventListener('touchstart', handleSliderStart, { passive: true });
+    progressSlider.addEventListener('input', handleSliderInput);
+    progressSlider.addEventListener('change', handleSliderEnd);
+    progressSlider.addEventListener('mouseup', handleSliderEnd);
+    progressSlider.addEventListener('touchend', handleSliderEnd);
   }
 
   function toggleDrawer(show) {
@@ -755,6 +866,17 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
   }
 
   document.addEventListener('click', (e) => {
+    const excludeTrigger = e.target.closest('.exclude-checkbox-label, .exclude-song-checkbox');
+    if (excludeTrigger) {
+      e.preventDefault();
+      e.stopPropagation();
+      const ytId = excludeTrigger.getAttribute('data-youtube-id') || excludeTrigger.querySelector('input')?.getAttribute('data-youtube-id');
+      if (ytId) {
+        toggleExcludeSong(ytId);
+      }
+      return;
+    }
+
     const shuffleTrigger = e.target.closest('#btn-shuffle, #drawer-btn-shuffle');
     if (shuffleTrigger) {
       e.preventDefault();
@@ -766,16 +888,8 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     if (songItem) {
       e.preventDefault();
       const idx = parseInt(songItem.getAttribute('data-index') || '0', 10);
-      if (isShuffle) {
-        const foundPos = shuffledQueue.indexOf(idx);
-        if (foundPos !== -1) {
-          shuffledIndexPosition = foundPos;
-        }
-      }
-      if (player && typeof player.playVideoAt === 'function') {
-        isRestored = true;
-        player.playVideoAt(idx);
-      }
+      playTrackAtIndex(idx);
+      toggleDrawer(false);
       return;
     }
 
