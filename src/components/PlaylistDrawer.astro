@@ -125,12 +125,14 @@ import { SONGS } from '../data/songs';
   class="fixed inset-0 bg-black/40 backdrop-blur-xs z-30 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out cursor-pointer"
 ></div>
 
-<script is:inline>
+<script>
+  import { playSound } from '../lib/sound';
+
   (function() {
     function setupDrawer() {
       const drawer = document.getElementById('playlist-drawer');
       const backdrop = document.getElementById('drawer-backdrop');
-      const searchInput = document.getElementById('drawer-search-input');
+      const searchInput = document.getElementById('drawer-search-input') as HTMLInputElement | null;
       const searchClear = document.getElementById('drawer-search-clear');
       const songItems = document.querySelectorAll('.drawer-song-item');
       const noResults = document.getElementById('drawer-no-results');
@@ -159,8 +161,10 @@ import { SONGS } from '../data/songs';
 
       // Real-time Song Search Filtering
       if (searchInput) {
-        searchInput.addEventListener('input', function(e) {
-          const query = (e.target.value || '').toLowerCase().trim();
+        searchInput.addEventListener('input', function(e: Event) {
+          playSound('typing', { volume: 0.08 });
+          const target = e.target as HTMLInputElement;
+          const query = (target.value || '').toLowerCase().trim();
           const items = document.querySelectorAll('.drawer-song-item');
           let matchCount = 0;
 
@@ -201,8 +205,11 @@ import { SONGS } from '../data/songs';
       }
 
       // Close drawer on backdrop click or anywhere outside
-      document.addEventListener('click', function(e) {
-        const playlistBtn = e.target.closest('#btn-playlist');
+      document.addEventListener('click', function(e: MouseEvent) {
+        const target = e.target as HTMLElement | null;
+        if (!target) return;
+
+        const playlistBtn = target.closest('#btn-playlist');
         if (playlistBtn) {
           e.preventDefault();
           openDrawer();
@@ -212,16 +219,16 @@ import { SONGS } from '../data/songs';
         const isDrawerOpen = drawer && drawer.classList.contains('opacity-100');
         if (!isDrawerOpen) return;
 
-        const closeBtn = e.target.closest('#close-drawer-btn');
-        const isInsideDrawer = drawer && (drawer.contains(e.target) || (e.composedPath && e.composedPath().includes(drawer)));
-        const isBackdrop = e.target === backdrop || e.target.id === 'drawer-backdrop';
+        const closeBtn = target.closest('#close-drawer-btn');
+        const isInsideDrawer = drawer && (drawer.contains(target) || (e.composedPath && e.composedPath().includes(drawer)));
+        const isBackdrop = target === backdrop || target.id === 'drawer-backdrop';
 
         if (closeBtn || (isBackdrop && !isInsideDrawer)) {
           closeDrawer();
         }
       });
 
-      document.addEventListener('keydown', function(e) {
+      document.addEventListener('keydown', function(e: KeyboardEvent) {
         if (e.key === 'Escape') closeDrawer();
       });
     }

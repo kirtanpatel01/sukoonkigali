@@ -197,89 +197,72 @@
   </div>
 </div>
 
-<script is:inline>
+<script>
+  import { playSound, stopProcessingLoop } from '../lib/sound';
+  import { openModalWithBackdrop, closeModalWithBackdrop, bindInputTypingSound, submitFormspreeForm } from '../lib/modalHelper';
+
   (function() {
     function setupFeedbackModal() {
-      const closeBtn = document.getElementById('close-feedback-btn');
       const backdrop = document.getElementById('feedback-backdrop');
       const modal = document.getElementById('feedback-modal');
-      const form = document.getElementById('feedback-form');
+      const form = document.getElementById('feedback-form') as HTMLFormElement | null;
       const successContainer = document.getElementById('feedback-success-container');
       const resetBtn = document.getElementById('feedback-reset-btn');
-      const submitBtn = document.getElementById('feedback-submit-btn');
+      const submitBtn = document.getElementById('feedback-submit-btn') as HTMLButtonElement | null;
       const submitText = document.getElementById('submit-btn-text');
       const submitSpinner = document.getElementById('submit-btn-spinner');
       const errorBanner = document.getElementById('feedback-error-banner');
-      const songTitleInput = document.getElementById('feedback-song-title');
+      const errorBannerText = document.getElementById('error-banner-text');
+      const songTitleInput = document.getElementById('feedback-song-title') as HTMLInputElement | null;
       const errorSongTitle = document.getElementById('error-song-title');
       const songTitleStar = document.getElementById('song-title-required-star');
-      const reasonInput = document.getElementById('feedback-reason');
+      const reasonInput = document.getElementById('feedback-reason') as HTMLTextAreaElement | HTMLInputElement | null;
+      const typeBtns = document.querySelectorAll('.feedback-type-btn');
+      const hiddenTypeInput = document.getElementById('feedback-type-hidden') as HTMLInputElement | null;
 
       let isSubmitting = false;
 
       function openModal() {
-        if (modal && backdrop) {
-          backdrop.classList.remove('opacity-0', 'pointer-events-none');
-          backdrop.classList.add('opacity-100', 'pointer-events-auto');
-
-          modal.classList.remove('opacity-0', 'pointer-events-none');
-          modal.classList.add('opacity-100', 'pointer-events-auto');
-        }
+        openModalWithBackdrop(modal, backdrop);
       }
 
       function closeModal() {
-        if (modal && backdrop) {
-          modal.classList.remove('opacity-100', 'pointer-events-auto');
-          modal.classList.add('opacity-0', 'pointer-events-none');
-
-          backdrop.classList.remove('opacity-100', 'pointer-events-auto');
-          backdrop.classList.add('opacity-0', 'pointer-events-none');
-        }
+        closeModalWithBackdrop(modal, backdrop);
       }
 
-      // Dynamic placeholder & pill styling when feedback_type choice changes
-      const typeBtns = document.querySelectorAll('.feedback-type-btn');
-      const hiddenTypeInput = document.getElementById('feedback-type-hidden');
+      bindInputTypingSound('#feedback-form');
 
-      function selectFeedbackType(value) {
-        if (hiddenTypeInput) hiddenTypeInput.value = value;
+      function selectFeedbackType(value: string | null) {
+        if (hiddenTypeInput) hiddenTypeInput.value = value || '';
         typeBtns.forEach(btn => {
           const val = btn.getAttribute('data-value');
-          if (val === value) {
-            btn.className = "feedback-type-btn py-2 px-2 text-xs font-sans rounded-xl border transition-all cursor-pointer text-center bg-white/10 text-[#f5f0e1] border-white/20 font-medium shadow-xs focus:outline-none";
-          } else {
-            btn.className = "feedback-type-btn py-2 px-2 text-xs font-sans rounded-xl border transition-all cursor-pointer text-center border-white/5 text-stone-400/80 hover:text-stone-200 hover:border-white/15 bg-transparent focus:outline-none";
-          }
+          btn.className = val === value
+            ? "feedback-type-btn py-2 px-2 text-xs font-sans rounded-xl border transition-all cursor-pointer text-center bg-white/10 text-[#f5f0e1] border-white/20 font-medium shadow-xs focus:outline-none"
+            : "feedback-type-btn py-2 px-2 text-xs font-sans rounded-xl border transition-all cursor-pointer text-center border-white/5 text-stone-400/80 hover:text-stone-200 hover:border-white/15 bg-transparent focus:outline-none";
         });
 
         if (reasonInput) {
-          if (value === 'Remove a song') {
-            reasonInput.placeholder = "What feels out of place about it?";
-          } else if (value === 'Something else') {
-            reasonInput.placeholder = "Tell us what's on your mind...";
-          } else {
-            reasonInput.placeholder = "What makes it belong here?";
-          }
+          reasonInput.placeholder = value === 'Remove a song'
+            ? "What feels out of place about it?"
+            : value === 'Something else'
+              ? "Tell us what's on your mind..."
+              : "What makes it belong here?";
         }
 
-        if (value === 'Something else') {
-          if (songTitleStar) songTitleStar.classList.add('hidden');
-        } else {
-          if (songTitleStar) songTitleStar.classList.remove('hidden');
-        }
+        if (songTitleStar) songTitleStar.classList.toggle('hidden', value === 'Something else');
         if (errorSongTitle) errorSongTitle.classList.add('hidden');
       }
 
       typeBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.preventDefault();
-          const val = btn.getAttribute('data-value');
-          selectFeedbackType(val);
+          playSound('select');
+          selectFeedbackType(btn.getAttribute('data-value'));
         });
       });
 
-      // Reset form to idle state
       function resetForm() {
+        stopProcessingLoop();
         if (form) form.reset();
         if (successContainer) successContainer.classList.add('hidden');
         if (form) form.classList.remove('hidden');
@@ -289,16 +272,16 @@
         if (submitText) submitText.innerText = "Send it our way";
         if (submitSpinner) submitSpinner.classList.add('hidden');
         isSubmitting = false;
-
         selectFeedbackType('Add a song');
       }
 
-      // Event listeners for triggers
       document.addEventListener('click', function(e) {
-        if (e.target.closest('#open-feedback-btn') || e.target.closest('.open-feedback-trigger') || e.target.closest('#drawer-feedback-btn')) {
+        const target = e.target as HTMLElement | null;
+        if (!target) return;
+        if (target.closest('#open-feedback-btn') || target.closest('.open-feedback-trigger') || target.closest('#drawer-feedback-btn')) {
           e.preventDefault();
           openModal();
-        } else if (e.target.closest('#close-feedback-btn') || e.target === backdrop) {
+        } else if (target.closest('#close-feedback-btn') || target === backdrop) {
           closeModal();
         }
       });
@@ -307,75 +290,33 @@
         if (e.key === 'Escape') closeModal();
       });
 
-      if (resetBtn) {
-        resetBtn.addEventListener('click', resetForm);
-      }
+      if (resetBtn) resetBtn.addEventListener('click', resetForm);
 
-      // Form submission via Vanilla JS Fetch (AJAX) to Formspree
       if (form) {
         form.addEventListener('submit', async function(e) {
           e.preventDefault();
           if (isSubmitting) return;
 
-          // Clear errors
           if (errorSongTitle) errorSongTitle.classList.add('hidden');
           if (errorBanner) errorBanner.classList.add('hidden');
 
-          const feedbackType = document.querySelector('input[name="feedback_type"]:checked')?.value || 'Add a song';
+          const feedbackType = (hiddenTypeInput?.value) || 'Add a song';
           const songTitle = (songTitleInput?.value || '').trim();
-
-          // Validation
-          let isValid = true;
 
           if (feedbackType !== 'Something else' && !songTitle) {
             if (errorSongTitle) errorSongTitle.classList.remove('hidden');
             if (songTitleInput) songTitleInput.focus();
-            isValid = false;
+            playSound('error');
+            return;
           }
 
-          if (!isValid) return;
-
-          // Set submitting state
           isSubmitting = true;
-          if (submitBtn) submitBtn.disabled = true;
-          if (submitText) submitText.innerText = "Sending...";
-          if (submitSpinner) submitSpinner.classList.remove('hidden');
-
-          const formData = new FormData(form);
-
-          try {
-            const response = await fetch(form.action, {
-              method: 'POST',
-              body: formData,
-              headers: {
-                'Accept': 'application/json'
-              }
-            });
-
-            if (response.ok) {
-              // Success state
-              if (form) form.classList.add('hidden');
-              if (successContainer) successContainer.classList.remove('hidden');
-            } else {
-              const data = await response.json().catch(() => ({}));
-              let msg = "Could not send submission. Please try again.";
-              if (data && data.errors && data.errors.length > 0) {
-                msg = data.errors.map(err => err.message).join(', ');
-              }
-              const bannerText = document.getElementById('error-banner-text');
-              if (bannerText) bannerText.innerText = msg;
-              if (errorBanner) errorBanner.classList.remove('hidden');
-            }
-          } catch (err) {
-            const bannerText = document.getElementById('error-banner-text');
-            if (bannerText) bannerText.innerText = "Network error. Please check your connection and try again.";
-            if (errorBanner) errorBanner.classList.remove('hidden');
-          } finally {
-            isSubmitting = false;
-            if (submitBtn) submitBtn.disabled = false;
-            if (submitText) submitText.innerText = "Send it our way";
-            if (submitSpinner) submitSpinner.classList.add('hidden');
-          }
+          await submitFormspreeForm(
+            form,
+            { submitBtn, submitText, submitSpinner, errorBanner, errorBannerText, successContainer },
+            "Could not send submission. Please try again."
+          );
+          isSubmitting = false;
         });
       }
     }

@@ -1,36 +1,13 @@
 ---
-import { PLAYLIST_ID, SONGS } from '../data/songs';
+import PlayerVideoCard from './player/PlayerVideoCard.astro';
+import PlayerProgress from './player/PlayerProgress.astro';
+import PlayerControls from './player/PlayerControls.astro';
+import PlayerSubControls from './player/PlayerSubControls.astro';
 ---
 <div id="player-outer-container" class="w-full max-w-lg mx-auto px-4 z-20 flex flex-col items-center select-none text-stone-200 transition-all duration-300 ease-in-out">
   <!-- Pure Typography & Direct Photo Controls -->
   <div class="w-full flex flex-col items-center space-y-4">
-    <!-- Official Visible YouTube Video Player Stack -->
-    <div class="w-full flex flex-col items-end">
-      <div 
-        id="yt-player-card"
-        class="w-full aspect-video bg-black/60 backdrop-blur-md border border-white/15 rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 select-none -translate-y-2 mb-1"
-      >
-        <div id="yt-player-container" class="w-full h-full"></div>
-      </div>
-
-      <!-- Enlarge / Compress Button Row (Bottom-Right directly below video player) -->
-      <div class="flex justify-end pr-1 -mt-1.5 mb-1 z-20">
-        <button 
-          type="button" 
-          id="btn-enlarge-player"
-          aria-label="Enlarge Video Player"
-          title="Enlarge Video Player"
-          class="text-stone-400/80 hover:text-[#e2b170] transition-all cursor-pointer p-1.5 rounded-lg bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/10 shadow-md focus:outline-none flex items-center space-x-1 text-[11px] font-sans"
-        >
-          <svg id="icon-expand" class="w-3.5 h-3.5 pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25v-4.5m0 4.5h-4.5m4.5 0L15 15m-11.25 5.25h4.5m-4.5 0v-4.5m0 4.5L9 15"/>
-          </svg>
-          <svg id="icon-compress" class="w-3.5 h-3.5 hidden pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M15 9h4.5M15 9V4.5M15 9l5.25-5.25M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 15h4.5M15 15v4.5M15 15l5.25 5.25"/>
-          </svg>
-        </button>
-      </div>
-    </div>
+    <PlayerVideoCard />
 
     <!-- Song Title & Artist -->
     <div class="text-center space-y-1.5 px-2">
@@ -42,228 +19,46 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
       </p>
     </div>
 
-    <!-- Thin Timeline Slider -->
-    <div class="w-full space-y-1.5 pt-1">
-      <div class="relative flex items-center">
-        <input 
-          type="range" 
-          id="progress-slider" 
-          min="0" 
-          max="100" 
-          value="0" 
-          step="0.1" 
-          class="w-full h-[2px] bg-white/20 appearance-none cursor-pointer focus:outline-none accent-[#e2b170]"
-        />
-      </div>
-      <div class="flex justify-between font-sans text-xs sm:text-sm text-stone-300/75 px-0.5">
-        <span id="time-current">0:00</span>
-        <span id="time-total">0:00</span>
-      </div>
-    </div>
-
-    <!-- Controls Row: Shuffle, Prev, Play/Pause, Next, Repeat -->
-    <div class="flex items-center space-x-6 sm:space-x-8 pt-1 z-20">
-      <!-- Shuffle -->
-      <div class="relative flex items-center justify-center">
-        <button 
-          type="button"
-          id="btn-shuffle" 
-          aria-label="Toggle Shuffle"
-          class="text-stone-400/80 hover:text-[#e2b170] transition-colors cursor-pointer p-2 focus:outline-none focus:text-[#e2b170] touch-manipulation"
-        >
-          <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>
-          </svg>
-        </button>
-      </div>
-
-      <!-- Previous -->
-      <div class="relative flex items-center justify-center">
-        <button 
-          type="button"
-          id="btn-prev" 
-          aria-label="Previous song"
-          class="text-stone-300/80 hover:text-[#e2b170] transition-colors cursor-pointer p-2 focus:outline-none focus:text-[#e2b170] touch-manipulation"
-        >
-          <svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19 20L9 12l10-8v16zM5 19V5"/>
-          </svg>
-        </button>
-      </div>
-
-      <!-- Play/Pause -->
-      <div class="relative flex items-center justify-center">
-        <button 
-          type="button"
-          id="btn-play" 
-          aria-label="Play or Pause"
-          class="w-13 h-13 sm:w-14 sm:h-14 rounded-full border border-white/30 hover:border-[#e2b170]/80 bg-black/40 text-[#f5f0e1] flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-lg focus:outline-none focus:border-[#e2b170] touch-manipulation"
-        >
-          <svg id="icon-play" class="w-5 h-5 sm:w-6 sm:h-6 translate-x-0.5 pointer-events-none" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M8 5v14l11-7z"/>
-          </svg>
-          <svg id="icon-pause" class="w-5 h-5 sm:w-6 sm:h-6 hidden pointer-events-none" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
-          </svg>
-        </button>
-      </div>
-
-      <!-- Next -->
-      <div class="relative flex items-center justify-center">
-        <button 
-          type="button"
-          id="btn-next" 
-          aria-label="Next song"
-          class="text-stone-300/80 hover:text-[#e2b170] transition-colors cursor-pointer p-2 focus:outline-none focus:text-[#e2b170] touch-manipulation"
-        >
-          <svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M5 4l10 8-10 8V4zM19 5v14"/>
-          </svg>
-        </button>
-      </div>
-
-      <!-- Repeat -->
-      <div class="relative flex items-center justify-center">
-        <button 
-          type="button"
-          id="btn-repeat" 
-          aria-label="Toggle Repeat Song"
-          class="text-stone-400/80 hover:text-[#e2b170] transition-colors cursor-pointer p-2 focus:outline-none focus:text-[#e2b170] touch-manipulation"
-        >
-          <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17 2l4 4m0 0l-4 4m4-4H7a5 5 0 00-5 5v3m5 8l-4-4m0 0l4-4m-4 4h14a5 5 0 005-5v-3"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-
-    <!-- Sub Controls: Track Index + Songs Drawer Group, Volume Control Slider -->
-    <div class="w-full flex items-end justify-between font-sans text-sm sm:text-base text-stone-300/85 pt-1 px-1 z-20">
-      <!-- Unified Stacked Playlist Group (01 / 106 over ☰) -->
-      <div class="relative flex flex-col items-center space-y-0.5">
-        <span id="track-index" class="font-sans text-[11px] sm:text-xs tracking-widest text-stone-400/70 font-mono select-none">
-          01 / 106
-        </span>
-
-        <button 
-          type="button"
-          id="btn-playlist" 
-          aria-label="Songs list"
-          class="text-stone-300/80 hover:text-[#e2b170] transition-colors cursor-pointer p-2 focus:outline-none focus:text-[#e2b170] touch-manipulation"
-        >
-          <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h11"/>
-          </svg>
-        </button>
-      </div>
-
-      <!-- Volume Mute Toggle & Slider -->
-      <div class="relative flex items-center space-x-2 pb-1">
-        <button 
-          type="button"
-          id="btn-mute" 
-          aria-label="Mute or Unmute"
-          class="font-sans hover:text-[#f5f0e1] transition-colors cursor-pointer p-2 focus:outline-none touch-manipulation"
-        >
-          <svg id="icon-volume-high" class="w-4 h-4 text-stone-300/80 hover:text-[#f5f0e1] pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M11 5L6 9H2v6h4l5 4V5z"/>
-          </svg>
-          <svg id="icon-volume-muted" class="w-4 h-4 text-amber-300/90 hidden pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17 14l4-4m0 4l-4-4"/>
-          </svg>
-        </button>
-
-        <input 
-          type="range" 
-          id="volume-slider" 
-          min="0" 
-          max="100" 
-          value="80" 
-          class="w-16 h-[2px] bg-white/20 appearance-none cursor-pointer focus:outline-none accent-[#e2b170] hidden sm:block" 
-        />
-      </div>
-    </div>
+    <PlayerProgress />
+    <PlayerControls />
+    <PlayerSubControls />
   </div>
 </div>
 
-<script is:inline define:vars={{ PLAYLIST_ID, SONGS }}>
-  let player = null;
+<script>
+  import { SONGS } from '../data/songs';
+  import { playSound, unlockAudio, isSoundEnabled, setSoundEnabled } from '../lib/sound';
+  import {
+    STORAGE_KEYS,
+    isSongExcluded,
+    toggleExcludeSongId,
+    getInitialSavedIndex,
+    getInitialSavedTime,
+    saveStateToStorage,
+    saveTimePositionToStorage
+  } from '../lib/player/storage';
+  import { renderDrawerList, highlightActiveDrawerSong } from '../lib/player/drawer';
+
+  declare global {
+    interface Window {
+      YT: any;
+      onYouTubeIframeAPIReady: any;
+    }
+  }
+
+  document.addEventListener('pointerdown', () => unlockAudio(), { once: true });
+  document.addEventListener('keydown', () => unlockAudio(), { once: true });
+
+  let player: any = null;
   let isPlaying = false;
   let isMuted = false;
   let isShuffle = false;
   let isRepeatSong = false;
-  let progressInterval = null;
-  let currentIndex = 0;
+  let progressInterval: ReturnType<typeof setInterval> | null = null;
+  let currentIndex = getInitialSavedIndex(SONGS.length);
   let isRestored = false;
   let isDraggingProgress = false;
-
-  const STORAGE_KEYS = {
-    TRACK_INDEX: 'skg_track_index',
-    TRACK_TIME: 'skg_track_time',
-    VOLUME: 'skg_volume',
-    IS_MUTED: 'skg_is_muted',
-    IS_SHUFFLE: 'skg_is_shuffle',
-    IS_REPEAT_SONG: 'skg_is_repeat_song',
-    EXCLUDED_SONGS: 'skg_excluded_songs'
-  };
-
-  let excludedSongIds = new Set((function() {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEYS.EXCLUDED_SONGS);
-      if (saved) {
-        const arr = JSON.parse(saved);
-        if (Array.isArray(arr)) return new Set(arr);
-      }
-    } catch (e) {}
-    return new Set();
-  })());
-
-  function isSongExcluded(youtubeId) {
-    return youtubeId ? excludedSongIds.has(youtubeId) : false;
-  }
-
-  function toggleExcludeSong(youtubeId) {
-    if (!youtubeId) return;
-    if (excludedSongIds.has(youtubeId)) {
-      excludedSongIds.delete(youtubeId);
-    } else {
-      excludedSongIds.add(youtubeId);
-    }
-    try {
-      localStorage.setItem(STORAGE_KEYS.EXCLUDED_SONGS, JSON.stringify(Array.from(excludedSongIds)));
-    } catch (e) {}
-
-    if (isShuffle) {
-      generateShuffledQueue();
-    }
-    renderDrawerList();
-
-    const currentSong = SONGS[currentIndex];
-    if (currentSong && isSongExcluded(currentSong.youtubeId)) {
-      playNextTrack();
-    }
-  }
-
-  const initialSavedIndex = (function() {
-    try {
-      const idx = localStorage.getItem(STORAGE_KEYS.TRACK_INDEX);
-      if (idx !== null) {
-        const parsed = parseInt(idx, 10);
-        return (!isNaN(parsed) && parsed >= 0 && parsed < SONGS.length) ? parsed : 0;
-      }
-      return 0;
-    } catch (e) { return 0; }
-  })();
-
-  const initialSavedTime = (function() {
-    try {
-      const t = localStorage.getItem(STORAGE_KEYS.TRACK_TIME);
-      return t !== null ? Math.max(0, parseFloat(t)) : 0;
-    } catch (e) { return 0; }
-  })();
-
-  currentIndex = initialSavedIndex;
+  const initialSavedTime = getInitialSavedTime();
 
   // DOM Elements
   const playBtn = document.getElementById('btn-play');
@@ -271,14 +66,12 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
   const iconPause = document.getElementById('icon-pause');
   const prevBtn = document.getElementById('btn-prev');
   const nextBtn = document.getElementById('btn-next');
-  const shuffleBtn = document.getElementById('btn-shuffle');
-  const drawerShuffleBtn = document.getElementById('drawer-btn-shuffle');
   const repeatBtn = document.getElementById('btn-repeat');
   const muteBtn = document.getElementById('btn-mute');
-  const volumeSlider = document.getElementById('volume-slider');
+  const volumeSlider = document.getElementById('volume-slider') as HTMLInputElement | null;
   const iconVolHigh = document.getElementById('icon-volume-high');
   const iconVolMuted = document.getElementById('icon-volume-muted');
-  const progressSlider = document.getElementById('progress-slider');
+  const progressSlider = document.getElementById('progress-slider') as HTMLInputElement | null;
   const songTitleEl = document.getElementById('current-song-title');
   const songArtistEl = document.getElementById('current-song-artist');
   const timeCurrentEl = document.getElementById('time-current');
@@ -286,7 +79,7 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
   const trackIndexEl = document.getElementById('track-index');
   const playlistBtn = document.getElementById('btn-playlist');
 
-  let shuffledQueue = [];
+  let shuffledQueue: number[] = [];
   let shuffledIndexPosition = 0;
 
   function generateShuffledQueue() {
@@ -310,86 +103,42 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     });
   }
 
-  function renderDrawerList() {
-    const container = document.getElementById('drawer-songs-list');
-    if (!container) return;
+  function doRenderDrawerList() {
+    renderDrawerList(currentIndex, isShuffle, shuffledQueue, generateShuffledQueue);
+  }
 
-    if (isShuffle && shuffledQueue.length === 0) {
+  function toggleExcludeSong(youtubeId: string) {
+    if (!youtubeId) return;
+    const willExclude = toggleExcludeSongId(youtubeId);
+    playSound(willExclude ? 'uncheck' : 'check');
+
+    if (isShuffle) {
       generateShuffledQueue();
     }
+    doRenderDrawerList();
 
-    const indicesToRender = isShuffle
-      ? shuffledQueue
-      : Array.from({ length: SONGS.length }, (_, i) => i);
-
-    container.innerHTML = indicesToRender.map((songIndex, displayIdx) => {
-      const song = SONGS[songIndex];
-      const isExcluded = isSongExcluded(song.youtubeId);
-      const isCurrentTrack = songIndex === currentIndex;
-      return `
-        <div 
-          data-index="${songIndex}" 
-          data-queue-pos="${displayIdx}"
-          data-youtube-id="${song.youtubeId}"
-          data-title="${song.title.toLowerCase()}"
-          data-artist="${song.artist.toLowerCase()}"
-          class="drawer-song-item w-full text-left transition-all flex items-center justify-between space-x-3 group py-1.5 border-b border-transparent ${isExcluded ? 'opacity-35' : ''}"
-        >
-          <div class="flex items-start space-x-3.5 flex-1 min-w-0 drawer-song-click-area ${isExcluded ? 'pointer-events-none cursor-not-allowed select-none' : 'cursor-pointer'}">
-            <span class="drawer-song-num font-sans text-xs ${isCurrentTrack ? 'text-[#e2b170]' : 'text-stone-500'} group-hover:text-[#e2b170] pt-0.5 font-mono min-w-[20px]">
-              ${(displayIdx + 1).toString().padStart(2, '0')}
-            </span>
-            <div class="flex-1 min-w-0">
-              <p class="drawer-song-title font-serif ${isCurrentTrack ? 'text-[#e2b170]' : 'text-[#f5f0e1]'} group-hover:text-[#e2b170] truncate font-light text-base leading-snug">
-                ${song.title}
-              </p>
-              <p class="drawer-song-artist font-sans text-xs text-stone-400/80 truncate mt-0.5">
-                ${song.artist}
-              </p>
-            </div>
-          </div>
-          <label 
-            class="exclude-checkbox-label relative flex items-center justify-center p-1.5 cursor-pointer group/checkbox select-none flex-shrink-0" 
-            title="${isExcluded ? 'Re-include song' : 'Exclude song'}"
-          >
-            <input 
-              type="checkbox" 
-              class="exclude-song-checkbox sr-only" 
-              data-youtube-id="${song.youtubeId}"
-              ${isExcluded ? 'checked' : ''} 
-            />
-            <div class="checkbox-box w-4 h-4 rounded border ${isExcluded ? 'border-[#e2b170] bg-[#e2b170]/20' : 'border-stone-500/60 bg-black/20'} group-hover/checkbox:border-[#e2b170] transition-all flex items-center justify-center">
-              <svg class="checkbox-check w-3 h-3 text-[#e2b170] ${isExcluded ? '' : 'hidden'}" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/>
-              </svg>
-            </div>
-          </label>
-        </div>
-      `;
-    }).join('');
-
-    highlightActiveDrawerSong(currentIndex);
-
-    const searchInput = document.getElementById('drawer-search-input');
-    if (searchInput && searchInput.value) {
-      searchInput.dispatchEvent(new Event('input'));
+    const currentSong = SONGS[currentIndex];
+    if (currentSong && isSongExcluded(currentSong.youtubeId)) {
+      playNextTrack();
     }
   }
 
   function toggleShuffleState() {
     isShuffle = !isShuffle;
+    playSound(isShuffle ? 'toggle-on' : 'toggle-off');
     if (isShuffle) {
       generateShuffledQueue();
     }
     syncShuffleUI();
-    renderDrawerList();
-    saveStateToLocalStorage();
+    doRenderDrawerList();
+    saveCurrentState();
   }
 
   let isVideoEnlarged = false;
 
   function toggleVideoEnlarge() {
     isVideoEnlarged = !isVideoEnlarged;
+    playSound(isVideoEnlarged ? 'expand' : 'collapse');
     const outerContainer = document.getElementById('player-outer-container');
     const playerCard = document.getElementById('yt-player-card');
     const iconExpand = document.getElementById('icon-expand');
@@ -401,9 +150,7 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     if (isVideoEnlarged) {
       outerContainer.classList.remove('max-w-lg');
       outerContainer.classList.add('max-w-3xl', 'sm:max-w-4xl');
-
       playerCard.classList.add('max-h-[calc(100vh-270px)]');
-
       if (iconExpand) iconExpand.classList.add('hidden');
       if (iconCompress) iconCompress.classList.remove('hidden');
       if (enlargeBtn) {
@@ -413,9 +160,7 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     } else {
       outerContainer.classList.remove('max-w-3xl', 'sm:max-w-4xl');
       outerContainer.classList.add('max-w-lg');
-
       playerCard.classList.remove('max-h-[calc(100vh-270px)]');
-
       if (iconExpand) iconExpand.classList.remove('hidden');
       if (iconCompress) iconCompress.classList.add('hidden');
       if (enlargeBtn) {
@@ -425,26 +170,15 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     }
   }
 
-  function saveStateToLocalStorage() {
-    if (!isRestored) return;
-    try {
-      localStorage.setItem(STORAGE_KEYS.TRACK_INDEX, currentIndex.toString());
-      localStorage.setItem(STORAGE_KEYS.IS_SHUFFLE, isShuffle ? 'true' : 'false');
-      localStorage.setItem(STORAGE_KEYS.IS_REPEAT_SONG, isRepeatSong ? 'true' : 'false');
-      localStorage.setItem(STORAGE_KEYS.IS_MUTED, isMuted ? 'true' : 'false');
-      if (volumeSlider) {
-        localStorage.setItem(STORAGE_KEYS.VOLUME, volumeSlider.value);
-      }
-    } catch (e) {}
-  }
-
-  function saveTimePositionToLocalStorage(currentTime) {
-    if (!isRestored) return;
-    try {
-      if (currentTime > 0) {
-        localStorage.setItem(STORAGE_KEYS.TRACK_TIME, Math.floor(currentTime).toString());
-      }
-    } catch (e) {}
+  function saveCurrentState() {
+    saveStateToStorage({
+      isRestored,
+      currentIndex,
+      isShuffle,
+      isRepeatSong,
+      isMuted,
+      volumeVal: volumeSlider ? volumeSlider.value : undefined
+    });
   }
 
   function restoreStateFromLocalStorage() {
@@ -456,7 +190,7 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
           generateShuffledQueue();
         }
         syncShuffleUI();
-        renderDrawerList();
+        doRenderDrawerList();
       }
 
       const savedRepeat = localStorage.getItem(STORAGE_KEYS.IS_REPEAT_SONG);
@@ -484,7 +218,7 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     } catch (e) {}
   }
 
-  function formatTime(seconds) {
+  function formatTime(seconds: number) {
     if (isNaN(seconds) || seconds < 0) return '0:00';
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
@@ -538,7 +272,7 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     });
   }
 
-  function playTrackAtIndex(index, startSecs = 0) {
+  function playTrackAtIndex(index: number, startSecs: number = 0) {
     if (index < 0 || index >= SONGS.length) index = 0;
     currentIndex = index;
     isRestored = true;
@@ -553,7 +287,7 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     updateTrackInfo();
   }
 
-  function onPlayerReady(event) {
+  function onPlayerReady(event: any) {
     restoreStateFromLocalStorage();
 
     const savedVol = parseInt(localStorage.getItem(STORAGE_KEYS.VOLUME) || '80', 10);
@@ -658,7 +392,7 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     playTrackAtIndex(prevIndex);
   }
 
-  function onPlayerStateChange(event) {
+  function onPlayerStateChange(event: any) {
     if (event.data === window.YT.PlayerState.PLAYING) {
       isPlaying = true;
       if (iconPlay) iconPlay.classList.add('hidden');
@@ -679,7 +413,7 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     }
   }
 
-  function onPlayerError(event) {
+  function onPlayerError(event: any) {
     if (songTitleEl) songTitleEl.innerText = "Skipping track...";
     setTimeout(() => {
       playNextTrack();
@@ -710,7 +444,7 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
 
     updateTrackIndexDisplay();
     highlightActiveDrawerSong(currentIndex);
-    saveStateToLocalStorage();
+    saveCurrentState();
   }
 
   function updateTrackIndexDisplay() {
@@ -720,7 +454,7 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     trackIndexEl.innerText = `${currStr} / ${totStr}`;
   }
 
-  function updateSliderTrackFill(sliderEl, percent) {
+  function updateSliderTrackFill(sliderEl: HTMLElement | null, percent: number) {
     if (!sliderEl) return;
     const clamped = Math.max(0, Math.min(100, percent));
     sliderEl.style.background = `linear-gradient(to right, #e2b170 ${clamped}%, rgba(255, 255, 255, 0.2) ${clamped}%)`;
@@ -736,10 +470,10 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
       if (timeTotalEl) timeTotalEl.innerText = formatTime(duration);
       if (duration > 0 && progressSlider && !isDraggingProgress) {
         const val = (current / duration) * 100;
-        progressSlider.value = val;
+        progressSlider.value = val.toString();
         updateSliderTrackFill(progressSlider, val);
       }
-      saveTimePositionToLocalStorage(current);
+      saveTimePositionToStorage(isRestored, current);
     }, 500);
   }
 
@@ -761,43 +495,6 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     highlightActiveDrawerSong(currentIndex);
   }
 
-  function highlightActiveDrawerSong(index) {
-    const counterEl = document.getElementById('drawer-counter-text');
-    if (counterEl) {
-      counterEl.innerText = `${index + 1} of ${SONGS.length}`;
-    }
-
-    document.querySelectorAll('.drawer-song-item').forEach(btn => {
-      const idx = parseInt(btn.getAttribute('data-index') || '-1', 10);
-      const numEl = btn.querySelector('.drawer-song-num');
-      const titleEl = btn.querySelector('.drawer-song-title');
-
-      if (idx === index) {
-        btn.classList.add('border-b', 'border-[#e2b170]/70');
-        btn.classList.remove('border-transparent');
-        if (numEl) {
-          numEl.classList.add('text-[#e2b170]');
-          numEl.classList.remove('text-stone-500');
-        }
-        if (titleEl) {
-          titleEl.classList.add('text-[#e2b170]');
-          titleEl.classList.remove('text-[#f5f0e1]');
-        }
-      } else {
-        btn.classList.remove('border-b', 'border-[#e2b170]/70');
-        btn.classList.add('border-transparent');
-        if (numEl) {
-          numEl.classList.remove('text-[#e2b170]');
-          numEl.classList.add('text-stone-500');
-        }
-        if (titleEl) {
-          titleEl.classList.remove('text-[#e2b170]');
-          titleEl.classList.add('text-[#f5f0e1]');
-        }
-      }
-    });
-  }
-
   // Mobile & Touch Gesture Control Listeners
   let pendingPlayOnReady = false;
 
@@ -808,41 +505,54 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
       return;
     }
     if (isPlaying) {
+      playSound('pause');
       player.pauseVideo();
     } else {
+      playSound('play');
       player.playVideo();
     }
   }
 
-  if (playBtn) {
-    playBtn.addEventListener('click', () => {
-      togglePlayState();
-    });
-  }
-
-  if (prevBtn) {
-    prevBtn.addEventListener('click', () => {
-      playPrevTrack();
-    });
-  }
-
-  if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
-      playNextTrack();
-    });
-  }
-
-
+  if (playBtn) playBtn.addEventListener('click', () => togglePlayState());
+  if (prevBtn) prevBtn.addEventListener('click', () => { playSound('skip-previous'); playPrevTrack(); });
+  if (nextBtn) nextBtn.addEventListener('click', () => { playSound('skip-next'); playNextTrack(); });
 
   if (repeatBtn) {
     repeatBtn.addEventListener('click', () => {
       isRepeatSong = !isRepeatSong;
+      playSound(isRepeatSong ? 'toggle-on' : 'toggle-off');
       repeatBtn.title = isRepeatSong ? 'Repeat Song (ON)' : 'Repeat Song (OFF)';
       repeatBtn.classList.toggle('text-[#e2b170]', isRepeatSong);
       repeatBtn.classList.toggle('text-stone-400/80', !isRepeatSong);
-      saveStateToLocalStorage();
+      saveCurrentState();
     });
   }
+
+  const sfxBtn = document.getElementById('btn-sfx-toggle');
+  const iconSfxOn = document.getElementById('icon-sfx-on');
+  const iconSfxOff = document.getElementById('icon-sfx-off');
+
+  function updateSfxUI() {
+    const enabled = isSoundEnabled();
+    if (iconSfxOn) iconSfxOn.classList.toggle('hidden', !enabled);
+    if (iconSfxOff) iconSfxOff.classList.toggle('hidden', enabled);
+    if (sfxBtn) {
+      sfxBtn.title = enabled ? 'UI Sound Effects (ON)' : 'UI Sound Effects (OFF)';
+      sfxBtn.classList.toggle('text-[#e2b170]', enabled);
+      sfxBtn.classList.toggle('text-stone-500/80', !enabled);
+    }
+  }
+
+  if (sfxBtn) {
+    sfxBtn.addEventListener('click', () => {
+      const nextState = !isSoundEnabled();
+      setSoundEnabled(nextState);
+      if (nextState) playSound('toggle-on');
+      updateSfxUI();
+    });
+  }
+
+  updateSfxUI();
 
   if (muteBtn) {
     muteBtn.addEventListener('click', () => {
@@ -850,23 +560,33 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
       if (isMuted) {
         player.unMute();
         isMuted = false;
+        playSound('toggle-off');
         if (iconVolHigh) iconVolHigh.classList.remove('hidden');
         if (iconVolMuted) iconVolMuted.classList.add('hidden');
       } else {
         player.mute();
         isMuted = true;
+        playSound('toggle-on');
         if (iconVolHigh) iconVolHigh.classList.add('hidden');
         if (iconVolMuted) iconVolMuted.classList.remove('hidden');
       }
-      saveStateToLocalStorage();
+      saveCurrentState();
     });
   }
 
   if (volumeSlider) {
     updateSliderTrackFill(volumeSlider, parseInt(volumeSlider.value, 10));
-    volumeSlider.addEventListener('input', (e) => {
-      const vol = parseInt(e.target.value, 10);
+    let lastVolumePlay = 0;
+    volumeSlider.addEventListener('input', (e: Event) => {
+      const vol = parseInt((e.target as HTMLInputElement).value, 10);
       updateSliderTrackFill(volumeSlider, vol);
+
+      const now = Date.now();
+      if (now - lastVolumePlay > 120) {
+        lastVolumePlay = now;
+        playSound('volume-change', { volume: 0.25 });
+      }
+
       if (player && typeof player.setVolume === 'function') {
         player.setVolume(vol);
         if (vol === 0) {
@@ -877,7 +597,7 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
           if (iconVolMuted) iconVolMuted.classList.add('hidden');
         }
       }
-      saveStateToLocalStorage();
+      saveCurrentState();
     });
   }
 
@@ -886,9 +606,9 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
       isDraggingProgress = true;
     };
 
-    const handleSliderInput = (e) => {
+    const handleSliderInput = (e: Event) => {
       isDraggingProgress = true;
-      const pct = parseFloat(e.target.value);
+      const pct = parseFloat((e.target as HTMLInputElement).value);
       updateSliderTrackFill(progressSlider, pct);
       if (!player || typeof player.getDuration !== 'function') return;
       const duration = player.getDuration() || 0;
@@ -899,13 +619,14 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     const handleSliderEnd = () => {
       if (!isDraggingProgress) return;
       isDraggingProgress = false;
+      playSound('seek');
       const pct = parseFloat(progressSlider.value);
       updateSliderTrackFill(progressSlider, pct);
       if (!player || typeof player.getDuration !== 'function') return;
       const duration = player.getDuration() || 0;
       const seekTo = (pct / 100) * duration;
       player.seekTo(seekTo, true);
-      saveTimePositionToLocalStorage(seekTo);
+      saveTimePositionToStorage(isRestored, seekTo);
     };
 
     progressSlider.addEventListener('mousedown', handleSliderStart);
@@ -916,7 +637,8 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     progressSlider.addEventListener('touchend', handleSliderEnd);
   }
 
-  function toggleDrawer(show) {
+  function toggleDrawer(show: boolean) {
+    playSound(show ? 'open' : 'close');
     const drawerEl = document.getElementById('playlist-drawer');
     const backdropEl = document.getElementById('drawer-backdrop');
     if (show) {
@@ -947,60 +669,55 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     });
   }
 
-  document.addEventListener('click', (e) => {
-    const excludeTrigger = e.target.closest('.exclude-checkbox-label, .exclude-song-checkbox');
+  document.addEventListener('click', (e: MouseEvent) => {
+    const target = e.target as HTMLElement | null;
+    if (!target) return;
+
+    const excludeTrigger = target.closest('.exclude-checkbox-label, .exclude-song-checkbox');
     if (excludeTrigger) {
       e.preventDefault();
       e.stopPropagation();
       const ytId = excludeTrigger.getAttribute('data-youtube-id') || excludeTrigger.querySelector('input')?.getAttribute('data-youtube-id');
-      if (ytId) {
-        toggleExcludeSong(ytId);
-      }
+      if (ytId) toggleExcludeSong(ytId);
       return;
     }
 
-    const enlargeTrigger = e.target.closest('#btn-enlarge-player');
+    const enlargeTrigger = target.closest('#btn-enlarge-player');
     if (enlargeTrigger) {
       e.preventDefault();
       toggleVideoEnlarge();
       return;
     }
 
-    const shuffleTrigger = e.target.closest('#btn-shuffle, #drawer-btn-shuffle');
+    const shuffleTrigger = target.closest('#btn-shuffle, #drawer-btn-shuffle');
     if (shuffleTrigger) {
       e.preventDefault();
       toggleShuffleState();
       return;
     }
 
-    const songItem = e.target.closest('.drawer-song-item');
+    const songItem = target.closest('.drawer-song-item');
     if (songItem) {
       e.preventDefault();
+      playSound('select');
       const idx = parseInt(songItem.getAttribute('data-index') || '0', 10);
       const queuePosStr = songItem.getAttribute('data-queue-pos');
       const queuePos = queuePosStr !== null ? parseInt(queuePosStr, 10) : -1;
       const ytId = songItem.getAttribute('data-youtube-id') || (SONGS[idx] && SONGS[idx].youtubeId);
-      if (ytId && isSongExcluded(ytId)) {
-        return;
-      }
-      if (isShuffle && queuePos !== -1) {
-        shuffledIndexPosition = queuePos;
-      }
+      if (ytId && isSongExcluded(ytId)) return;
+      if (isShuffle && queuePos !== -1) shuffledIndexPosition = queuePos;
       playTrackAtIndex(idx);
       return;
     }
 
-    const closeBtn = e.target.closest('#close-drawer-btn');
-    const backdropEl = e.target.closest('#drawer-backdrop');
-    if (closeBtn || backdropEl) {
-      toggleDrawer(false);
-    }
+    const closeBtn = target.closest('#close-drawer-btn');
+    const backdropEl = target.closest('#drawer-backdrop');
+    if (closeBtn || backdropEl) toggleDrawer(false);
   });
 
   // Centralized Global Keyboard Shortcuts Handler
-  document.addEventListener('keydown', (e) => {
-    // 1. Never trigger shortcuts when typing inside form inputs or editable elements
-    const active = document.activeElement;
+  document.addEventListener('keydown', (e: KeyboardEvent) => {
+    const active = document.activeElement as HTMLElement | null;
     const isTyping = active && (
       active.tagName === 'INPUT' ||
       active.tagName === 'TEXTAREA' ||
@@ -1010,7 +727,6 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     );
     if (isTyping) return;
 
-    // 2. Escape: closes open modal or drawer
     if (e.key === 'Escape') {
       const feedbackModal = document.getElementById('feedback-modal');
       const isFeedbackOpen = feedbackModal && feedbackModal.classList.contains('opacity-100');
@@ -1022,51 +738,43 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
       return;
     }
 
-    // 3. Play / Pause: Space or K
     if (e.code === 'Space' || e.key === 'k' || e.key === 'K') {
       e.preventDefault();
       if (playBtn) playBtn.click();
       return;
     }
 
-    // 4. Seek +10 seconds: ArrowRight
     if (e.code === 'ArrowRight' && !e.shiftKey) {
       e.preventDefault();
       if (player && typeof player.getCurrentTime === 'function' && typeof player.seekTo === 'function') {
         const current = player.getCurrentTime() || 0;
         const duration = player.getDuration() || 0;
-        const target = Math.min(current + 10, duration);
-        player.seekTo(target, true);
+        player.seekTo(Math.min(current + 10, duration), true);
       }
       return;
     }
 
-    // 5. Seek -10 seconds: ArrowLeft
     if (e.code === 'ArrowLeft' && !e.shiftKey) {
       e.preventDefault();
       if (player && typeof player.getCurrentTime === 'function' && typeof player.seekTo === 'function') {
         const current = player.getCurrentTime() || 0;
-        const target = Math.max(current - 10, 0);
-        player.seekTo(target, true);
+        player.seekTo(Math.max(current - 10, 0), true);
       }
       return;
     }
 
-    // 6. Next song: N, ], or Shift+ArrowRight
     if (e.key === 'n' || e.key === 'N' || e.key === ']' || (e.code === 'ArrowRight' && e.shiftKey)) {
       e.preventDefault();
       if (nextBtn) nextBtn.click();
       return;
     }
 
-    // 7. Previous song: B, [, or Shift+ArrowLeft
     if (e.key === 'b' || e.key === 'B' || e.key === '[' || (e.code === 'ArrowLeft' && e.shiftKey)) {
       e.preventDefault();
       if (prevBtn) prevBtn.click();
       return;
     }
 
-    // 6. Toggle Shuffle: S
     if (e.key === 's' || e.key === 'S') {
       e.preventDefault();
       const shuffleTrigger = document.getElementById('btn-shuffle');
@@ -1074,47 +782,36 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
       return;
     }
 
-    // 7. Toggle Repeat: R
     if (e.key === 'r' || e.key === 'R') {
       e.preventDefault();
       if (repeatBtn) repeatBtn.click();
       return;
     }
 
-    // 8. Mute / Unmute: M
     if (e.key === 'm' || e.key === 'M') {
       e.preventDefault();
       if (muteBtn) muteBtn.click();
       return;
     }
 
-    // 9. Songs Drawer toggle: P
     if (e.key === 'p' || e.key === 'P') {
       e.preventDefault();
       const drawerEl = document.getElementById('playlist-drawer');
       const isOpen = drawerEl && drawerEl.classList.contains('opacity-100');
-      if (isOpen) {
-        toggleDrawer(false);
-      } else {
-        toggleDrawer(true);
-      }
+      toggleDrawer(!isOpen);
       return;
     }
 
-    // 10. Suggest Song Modal: F
     if (e.key === 'f' || e.key === 'F') {
       e.preventDefault();
-      const openFeedback = document.getElementById('open-feedback-btn');
-      if (openFeedback) openFeedback.click();
+      document.getElementById('open-feedback-btn')?.click();
       return;
     }
   });
 
-  // Bind clicks to pre-rendered drawer song items
   bindDrawerSongClicks();
   updateTrackInfo();
   
-  // Schedule YouTube API loading asynchronously right after initial paint to optimize page startup
   if ('requestIdleCallback' in window) {
     window.requestIdleCallback(() => loadYTAPI(), { timeout: 1200 });
   } else {

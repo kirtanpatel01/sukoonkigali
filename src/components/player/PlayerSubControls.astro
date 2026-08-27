@@ -1,0 +1,68 @@
+---
+---
+<!-- Sub Controls: Track Index + Songs Drawer Group, Sound SFX Toggle & Volume Control Slider -->
+<div class="w-full flex items-end justify-between font-sans text-sm sm:text-base text-stone-300/85 pt-1 px-1 z-20">
+  <!-- Unified Stacked Playlist Group (01 / 106 over ☰) -->
+  <div class="relative flex flex-col items-center space-y-0.5">
+    <span id="track-index" class="font-sans text-[11px] sm:text-xs tracking-widest text-stone-400/70 font-mono select-none">
+      01 / 106
+    </span>
+
+    <button 
+      type="button"
+      id="btn-playlist" 
+      aria-label="Songs list"
+      class="text-stone-300/80 hover:text-[#e2b170] transition-colors cursor-pointer p-2 focus:outline-none focus:text-[#e2b170] touch-manipulation"
+    >
+      <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h11"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Audio Controls Group: SFX Toggle, Mute Button, & Volume Slider -->
+  <div class="relative flex items-center space-x-1.5 pb-1">
+    <!-- Sound Effects SFX Preference Toggle (Headphones Icon) -->
+    <button 
+      type="button"
+      id="btn-sfx-toggle" 
+      aria-label="Toggle UI sound effects"
+      title="UI Sound Effects (ON)"
+      class="text-stone-300/80 hover:text-[#e2b170] transition-colors cursor-pointer p-2 focus:outline-none focus:text-[#e2b170] touch-manipulation"
+    >
+      <!-- Headphones Sound ON Icon -->
+      <svg id="icon-sfx-on" class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12a9.75 9.75 0 0119.5 0v5.25A2.25 2.25 0 0119.5 19.5h-1.5A2.25 2.25 0 0115.75 17.25V14.25A2.25 2.25 0 0118 12h1.5M2.25 12v5.25A2.25 2.25 0 004.5 19.5h1.5a2.25 2.25 0 002.25-2.25V14.25A2.25 2.25 0 006 12H4.5" />
+      </svg>
+      <!-- Headphones Sound OFF Icon -->
+      <svg id="icon-sfx-off" class="w-4 h-4 text-stone-500/80 hidden pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18M2.25 12a9.75 9.75 0 0119.5 0v5.25A2.25 2.25 0 0119.5 19.5h-1.5A2.25 2.25 0 0115.75 17.25V14.25A2.25 2.25 0 0118 12h1.5M2.25 12v5.25A2.25 2.25 0 004.5 19.5h1.5a2.25 2.25 0 002.25-2.25V14.25A2.25 2.25 0 006 12H4.5" />
+      </svg>
+    </button>
+
+    <!-- Volume Mute Toggle & Slider -->
+    <button 
+      type="button"
+      id="btn-mute" 
+      aria-label="Mute or Unmute"
+      class="font-sans hover:text-[#f5f0e1] transition-colors cursor-pointer p-2 focus:outline-none touch-manipulation"
+    >
+      <svg id="icon-volume-high" class="w-4 h-4 text-stone-300/80 hover:text-[#f5f0e1] pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M11 5L6 9H2v6h4l5 4V5z"/>
+      </svg>
+      <svg id="icon-volume-muted" class="w-4 h-4 text-amber-300/90 hidden pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" d="M17 14l4-4m0 4l-4-4"/>
+      </svg>
+    </button>
+
+    <input 
+      type="range" 
+      id="volume-slider" 
+      min="0" 
+      max="100" 
+      value="80" 
+      class="w-16 h-[2px] bg-white/20 appearance-none cursor-pointer focus:outline-none accent-[#e2b170] hidden sm:block" 
+    />
+  </div>
+</div>

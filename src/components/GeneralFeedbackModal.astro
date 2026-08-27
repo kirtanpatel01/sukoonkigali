@@ -180,56 +180,42 @@ const feedbackEndpoint = import.meta.env.PUBLIC_FORMSPREE_FEEDBACK_ENDPOINT || '
       </div>
     </form>
   </div>
-</div>
+</div><script>
+  import { playSound, stopProcessingLoop } from '../lib/sound';
+  import { openModalWithBackdrop, closeModalWithBackdrop, bindInputTypingSound, submitFormspreeForm } from '../lib/modalHelper';
 
-<script is:inline>
   (function() {
     function setupGeneralFeedbackModal() {
       const modal = document.getElementById('general-feedback-modal');
       const backdrop = document.getElementById('general-feedback-backdrop');
       const closeBtn = document.getElementById('close-general-feedback-btn');
-      const form = document.getElementById('general-feedback-form');
+      const form = document.getElementById('general-feedback-form') as HTMLFormElement | null;
       const successContainer = document.getElementById('general-feedback-success-container');
       const resetBtn = document.getElementById('general-feedback-reset-btn');
-      
-      const hiddenTypeInput = document.getElementById('general-feedback-type-hidden');
+      const hiddenTypeInput = document.getElementById('general-feedback-type-hidden') as HTMLInputElement | null;
       const typeBtns = document.querySelectorAll('.general-feedback-type-btn');
-      
-      const messageInput = document.getElementById('general-feedback-message');
+      const messageInput = document.getElementById('general-feedback-message') as HTMLTextAreaElement | null;
       const errorMessage = document.getElementById('general-error-message');
       const errorBanner = document.getElementById('general-feedback-error-banner');
-      
-      const submitBtn = document.getElementById('general-feedback-submit-btn');
+      const errorBannerText = document.getElementById('general-error-banner-text');
+      const submitBtn = document.getElementById('general-feedback-submit-btn') as HTMLButtonElement | null;
       const submitText = document.getElementById('general-submit-btn-text');
       const submitSpinner = document.getElementById('general-submit-btn-spinner');
 
       let isSubmitting = false;
 
       function openModal() {
-        if (!modal || !backdrop) return;
-        backdrop.classList.remove('pointer-events-none', 'opacity-0');
-        backdrop.classList.add('opacity-100');
-
-        modal.classList.remove('pointer-events-none', 'opacity-0');
-        modal.classList.add('opacity-100');
-
-        setTimeout(() => {
-          if (messageInput) messageInput.focus();
-        }, 100);
+        openModalWithBackdrop(modal, backdrop, messageInput);
       }
 
       function closeModal() {
-        if (!modal || !backdrop) return;
-        backdrop.classList.remove('opacity-100');
-        backdrop.classList.add('opacity-0', 'pointer-events-none');
-
-        modal.classList.remove('opacity-100');
-        modal.classList.add('opacity-0', 'pointer-events-none');
-
-        setTimeout(resetForm, 350);
+        closeModalWithBackdrop(modal, backdrop, resetForm);
       }
 
+      bindInputTypingSound('#general-feedback-form');
+
       function resetForm() {
+        stopProcessingLoop();
         isSubmitting = false;
         if (form) {
           form.reset();
@@ -238,66 +224,54 @@ const feedbackEndpoint = import.meta.env.PUBLIC_FORMSPREE_FEEDBACK_ENDPOINT || '
         if (successContainer) successContainer.classList.add('hidden');
         if (errorMessage) errorMessage.classList.add('hidden');
         if (errorBanner) errorBanner.classList.add('hidden');
-        
         if (submitBtn) submitBtn.disabled = false;
         if (submitText) submitText.innerText = "Send it our way";
         if (submitSpinner) submitSpinner.classList.add('hidden');
 
-        // Reset Pills
         typeBtns.forEach((btn, idx) => {
-          if (idx === 0) {
-            btn.classList.add('bg-white/10', 'text-[#f5f0e1]', 'border-white/20', 'font-medium');
-            btn.classList.remove('bg-transparent', 'text-stone-400/80', 'border-white/5');
-            if (hiddenTypeInput) hiddenTypeInput.value = btn.getAttribute('data-value') || 'Loved it';
-          } else {
-            btn.classList.remove('bg-white/10', 'text-[#f5f0e1]', 'border-white/20', 'font-medium');
-            btn.classList.add('bg-transparent', 'text-stone-400/80', 'border-white/5');
+          btn.classList.toggle('bg-white/10', idx === 0);
+          btn.classList.toggle('text-[#f5f0e1]', idx === 0);
+          btn.classList.toggle('border-white/20', idx === 0);
+          btn.classList.toggle('font-medium', idx === 0);
+          btn.classList.toggle('bg-transparent', idx !== 0);
+          btn.classList.toggle('text-stone-400/80', idx !== 0);
+          btn.classList.toggle('border-white/5', idx !== 0);
+          if (idx === 0 && hiddenTypeInput) {
+            hiddenTypeInput.value = btn.getAttribute('data-value') || 'Loved it';
           }
         });
       }
 
-      // Pill Category Toggle
       typeBtns.forEach(btn => {
         btn.addEventListener('click', () => {
+          playSound('select');
           typeBtns.forEach(b => {
             b.classList.remove('bg-white/10', 'text-[#f5f0e1]', 'border-white/20', 'font-medium');
             b.classList.add('bg-transparent', 'text-stone-400/80', 'border-white/5');
           });
           btn.classList.add('bg-white/10', 'text-[#f5f0e1]', 'border-white/20', 'font-medium');
           btn.classList.remove('bg-transparent', 'text-stone-400/80', 'border-white/5');
-          
-          const val = btn.getAttribute('data-value') || 'Loved it';
-          if (hiddenTypeInput) hiddenTypeInput.value = val;
+          if (hiddenTypeInput) hiddenTypeInput.value = btn.getAttribute('data-value') || 'Loved it';
         });
       });
 
-      // Global click trigger handling for .open-general-feedback-trigger
       document.addEventListener('click', function(e) {
-        const trigger = e.target.closest('.open-general-feedback-trigger');
-        if (trigger) {
+        const target = e.target as HTMLElement | null;
+        if (target?.closest('.open-general-feedback-trigger')) {
           e.preventDefault();
           openModal();
         }
       });
 
-      if (closeBtn) {
-        closeBtn.addEventListener('click', closeModal);
-      }
-
-      if (backdrop) {
-        backdrop.addEventListener('click', closeModal);
-      }
+      if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      if (backdrop) backdrop.addEventListener('click', closeModal);
 
       document.addEventListener('keydown', function(e) {
-        const isModalOpen = modal && modal.classList.contains('opacity-100');
-        if (isModalOpen && e.key === 'Escape') closeModal();
+        if (modal?.classList.contains('opacity-100') && e.key === 'Escape') closeModal();
       });
 
-      if (resetBtn) {
-        resetBtn.addEventListener('click', resetForm);
-      }
+      if (resetBtn) resetBtn.addEventListener('click', resetForm);
 
-      // Form submission via Vanilla JS Fetch (AJAX) to Formspree
       if (form) {
         form.addEventListener('submit', async function(e) {
           e.preventDefault();
@@ -307,51 +281,20 @@ const feedbackEndpoint = import.meta.env.PUBLIC_FORMSPREE_FEEDBACK_ENDPOINT || '
           if (errorBanner) errorBanner.classList.add('hidden');
 
           const messageVal = (messageInput?.value || '').trim();
-
           if (!messageVal) {
+            playSound('error');
             if (errorMessage) errorMessage.classList.remove('hidden');
             if (messageInput) messageInput.focus();
             return;
           }
 
-          // Set submitting state
           isSubmitting = true;
-          if (submitBtn) submitBtn.disabled = true;
-          if (submitText) submitText.innerText = "Sending...";
-          if (submitSpinner) submitSpinner.classList.remove('hidden');
-
-          const formData = new FormData(form);
-
-          try {
-            const response = await fetch(form.action, {
-              method: 'POST',
-              body: formData,
-              headers: {
-                'Accept': 'application/json'
-              }
-            });
-
-            if (response.ok) {
-              if (form) form.classList.add('hidden');
-              if (successContainer) successContainer.classList.remove('hidden');
-            } else {
-              const bannerText = document.getElementById('general-error-banner-text');
-              if (bannerText) bannerText.innerText = "Couldn't send that right now. Please try again.";
-              if (errorBanner) errorBanner.classList.remove('hidden');
-              isSubmitting = false;
-              if (submitBtn) submitBtn.disabled = false;
-              if (submitText) submitText.innerText = "Send it our way";
-              if (submitSpinner) submitSpinner.classList.add('hidden');
-            }
-          } catch (err) {
-            const bannerText = document.getElementById('general-error-banner-text');
-            if (bannerText) bannerText.innerText = "Couldn't send that right now. Please try again.";
-            if (errorBanner) errorBanner.classList.remove('hidden');
-            isSubmitting = false;
-            if (submitBtn) submitBtn.disabled = false;
-            if (submitText) submitText.innerText = "Send it our way";
-            if (submitSpinner) submitSpinner.classList.add('hidden');
-          }
+          await submitFormspreeForm(
+            form,
+            { submitBtn, submitText, submitSpinner, errorBanner, errorBannerText: errorBannerText, successContainer },
+            "Couldn't send that right now. Please try again."
+          );
+          isSubmitting = false;
         });
       }
     }

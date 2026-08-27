@@ -1,0 +1,29 @@
+---
+---
+<!-- Official Visible YouTube Video Player Stack -->
+<div class="w-full flex flex-col items-end">
+  <div 
+    id="yt-player-card"
+    class="w-full aspect-video bg-black/60 backdrop-blur-md border border-white/15 rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 select-none -translate-y-2 mb-1"
+  >
+    <div id="yt-player-container" class="w-full h-full"></div>
+  </div>
+
+  <!-- Enlarge / Compress Button Row (Bottom-Right directly below video player) -->
+  <div class="flex justify-end pr-1 -mt-1.5 mb-1 z-20">
+    <button 
+      type="button" 
+      id="btn-enlarge-player"
+      aria-label="Enlarge Video Player"
+      title="Enlarge Video Player"
+      class="text-stone-400/80 hover:text-[#e2b170] transition-all cursor-pointer p-1.5 rounded-lg bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/10 shadow-md focus:outline-none flex items-center space-x-1 text-[11px] font-sans"
+    >
+      <svg id="icon-expand" class="w-3.5 h-3.5 pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25v-4.5m0 4.5h-4.5m4.5 0L15 15m-11.25 5.25h4.5m-4.5 0v-4.5m0 4.5L9 15"/>
+      </svg>
+      <svg id="icon-compress" class="w-3.5 h-3.5 hidden pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M15 9h4.5M15 9V4.5M15 9l5.25-5.25M9 15h4.5M15 9V4.5M15 9l5.25-5.25M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 15h4.5M15 15v4.5M15 15l5.25 5.25"/>
+      </svg>
+    </button>
+  </div>
+</div>
