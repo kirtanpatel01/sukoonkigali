@@ -4,8 +4,8 @@ import Background from '../components/Background.astro';
 import MusicPlayer from '../components/MusicPlayer.astro';
 import PlaylistDrawer from '../components/PlaylistDrawer.astro';
 import FeedbackModal from '../components/FeedbackModal.astro';
+import GeneralFeedbackModal from '../components/GeneralFeedbackModal.astro';
 import CreatorFooter from '../components/CreatorFooter.astro';
-import MobileInstallBtn from '../components/MobileInstallBtn.astro';
 import { SONGS } from '../data/songs';
 
 const pageTitle = "Sukoon Ki Gali";
@@ -150,9 +150,7 @@ const structuredData = {
 
     <!-- Feedback Modal & Trigger -->
     <FeedbackModal />
-
-    <!-- Top-Right Mobile Install App Button -->
-    <MobileInstallBtn />
+    <GeneralFeedbackModal />
 
     <!-- Subtle Creator Credit -->
     <CreatorFooter />

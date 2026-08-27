@@ -295,21 +295,24 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
       generateShuffledQueue();
     }
 
-    const indicesToRender = Array.from({ length: SONGS.length }, (_, i) => i);
+    const indicesToRender = isShuffle
+      ? shuffledQueue
+      : Array.from({ length: SONGS.length }, (_, i) => i);
 
-    container.innerHTML = indicesToRender.map((songIndex) => {
+    container.innerHTML = indicesToRender.map((songIndex, displayIdx) => {
       const song = SONGS[songIndex];
       const isExcluded = isSongExcluded(song.youtubeId);
       const isCurrentTrack = songIndex === currentIndex;
       return `
         <div 
           data-index="${songIndex}" 
+          data-queue-pos="${displayIdx}"
           data-youtube-id="${song.youtubeId}"
           class="drawer-song-item w-full text-left transition-all flex items-center justify-between space-x-3 group py-1.5 border-b border-transparent ${isExcluded ? 'opacity-35' : ''}"
         >
           <div class="flex items-start space-x-3.5 flex-1 min-w-0 drawer-song-click-area ${isExcluded ? 'pointer-events-none cursor-not-allowed select-none' : 'cursor-pointer'}">
             <span class="drawer-song-num font-sans text-xs ${isCurrentTrack ? 'text-[#e2b170]' : 'text-stone-500'} group-hover:text-[#e2b170] pt-0.5 font-mono min-w-[20px]">
-              ${(songIndex + 1).toString().padStart(2, '0')}
+              ${(displayIdx + 1).toString().padStart(2, '0')}
             </span>
             <div class="flex-1 min-w-0">
               <p class="drawer-song-title font-serif ${isCurrentTrack ? 'text-[#e2b170]' : 'text-[#f5f0e1]'} group-hover:text-[#e2b170] truncate font-light text-base leading-snug">
@@ -887,17 +890,14 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     if (songItem) {
       e.preventDefault();
       const idx = parseInt(songItem.getAttribute('data-index') || '0', 10);
+      const queuePosStr = songItem.getAttribute('data-queue-pos');
+      const queuePos = queuePosStr !== null ? parseInt(queuePosStr, 10) : -1;
       const ytId = songItem.getAttribute('data-youtube-id') || (SONGS[idx] && SONGS[idx].youtubeId);
       if (ytId && isSongExcluded(ytId)) {
         return;
       }
-      if (isShuffle) {
-        const foundPos = shuffledQueue.indexOf(idx);
-        if (foundPos !== -1) {
-          shuffledIndexPosition = foundPos;
-        } else {
-          generateShuffledQueue();
-        }
+      if (isShuffle && queuePos !== -1) {
+        shuffledIndexPosition = queuePos;
       }
       playTrackAtIndex(idx);
       return;
