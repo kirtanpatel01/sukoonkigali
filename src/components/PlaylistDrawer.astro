@@ -161,6 +161,7 @@ import { SONGS } from '../data/songs';
       if (searchInput) {
         searchInput.addEventListener('input', function(e) {
           const query = (e.target.value || '').toLowerCase().trim();
+          const items = document.querySelectorAll('.drawer-song-item');
           let matchCount = 0;
 
           if (query.length > 0) {
@@ -169,9 +170,9 @@ import { SONGS } from '../data/songs';
             if (searchClear) searchClear.classList.add('hidden');
           }
 
-          songItems.forEach(item => {
-            const title = item.getAttribute('data-title') || '';
-            const artist = item.getAttribute('data-artist') || '';
+          items.forEach(item => {
+            const title = (item.getAttribute('data-title') || item.querySelector('.drawer-song-title')?.textContent || '').toLowerCase();
+            const artist = (item.getAttribute('data-artist') || item.querySelector('.drawer-song-artist')?.textContent || '').toLowerCase();
             if (title.includes(query) || artist.includes(query)) {
               item.classList.remove('hidden');
               matchCount++;

@@ -1,14 +1,37 @@
 ---
 import { PLAYLIST_ID, SONGS } from '../data/songs';
 ---
-<div class="w-full max-w-lg mx-auto px-4 z-20 flex flex-col items-center select-none text-stone-200">
-  <!-- Compliant YouTube IFrame API Embed (200x200 Offscreen for Mobile HTML5 Video compliance) -->
-  <div class="fixed bottom-0 right-0 w-[200px] h-[200px] opacity-0 pointer-events-none -z-50 overflow-hidden" aria-hidden="true">
-    <div id="yt-player-container"></div>
-  </div>
-
-  <!-- Pure Typography & Direct Photo Controls (No card background) -->
+<div id="player-outer-container" class="w-full max-w-lg mx-auto px-4 z-20 flex flex-col items-center select-none text-stone-200 transition-all duration-300 ease-in-out">
+  <!-- Pure Typography & Direct Photo Controls -->
   <div class="w-full flex flex-col items-center space-y-4">
+    <!-- Official Visible YouTube Video Player Stack -->
+    <div class="w-full flex flex-col items-end">
+      <div 
+        id="yt-player-card"
+        class="w-full aspect-video bg-black/60 backdrop-blur-md border border-white/15 rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 select-none -translate-y-2 mb-1"
+      >
+        <div id="yt-player-container" class="w-full h-full"></div>
+      </div>
+
+      <!-- Enlarge / Compress Button Row (Bottom-Right directly below video player) -->
+      <div class="flex justify-end pr-1 -mt-1.5 mb-1 z-20">
+        <button 
+          type="button" 
+          id="btn-enlarge-player"
+          aria-label="Enlarge Video Player"
+          title="Enlarge Video Player"
+          class="text-stone-400/80 hover:text-[#e2b170] transition-all cursor-pointer p-1.5 rounded-lg bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/10 shadow-md focus:outline-none flex items-center space-x-1 text-[11px] font-sans"
+        >
+          <svg id="icon-expand" class="w-3.5 h-3.5 pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25v-4.5m0 4.5h-4.5m4.5 0L15 15m-11.25 5.25h4.5m-4.5 0v-4.5m0 4.5L9 15"/>
+          </svg>
+          <svg id="icon-compress" class="w-3.5 h-3.5 hidden pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M15 9h4.5M15 9V4.5M15 9l5.25-5.25M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 15h4.5M15 15v4.5M15 15l5.25 5.25"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
     <!-- Song Title & Artist -->
     <div class="text-center space-y-1.5 px-2">
       <h2 id="current-song-title" class="font-serif text-2xl sm:text-3xl md:text-4xl font-light text-[#f5f0e1] tracking-wide line-clamp-1 drop-shadow-md transition-opacity duration-300 ease-in-out">
@@ -308,6 +331,8 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
           data-index="${songIndex}" 
           data-queue-pos="${displayIdx}"
           data-youtube-id="${song.youtubeId}"
+          data-title="${song.title.toLowerCase()}"
+          data-artist="${song.artist.toLowerCase()}"
           class="drawer-song-item w-full text-left transition-all flex items-center justify-between space-x-3 group py-1.5 border-b border-transparent ${isExcluded ? 'opacity-35' : ''}"
         >
           <div class="flex items-start space-x-3.5 flex-1 min-w-0 drawer-song-click-area ${isExcluded ? 'pointer-events-none cursor-not-allowed select-none' : 'cursor-pointer'}">
@@ -344,6 +369,11 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     }).join('');
 
     highlightActiveDrawerSong(currentIndex);
+
+    const searchInput = document.getElementById('drawer-search-input');
+    if (searchInput && searchInput.value) {
+      searchInput.dispatchEvent(new Event('input'));
+    }
   }
 
   function toggleShuffleState() {
@@ -354,6 +384,45 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     syncShuffleUI();
     renderDrawerList();
     saveStateToLocalStorage();
+  }
+
+  let isVideoEnlarged = false;
+
+  function toggleVideoEnlarge() {
+    isVideoEnlarged = !isVideoEnlarged;
+    const outerContainer = document.getElementById('player-outer-container');
+    const playerCard = document.getElementById('yt-player-card');
+    const iconExpand = document.getElementById('icon-expand');
+    const iconCompress = document.getElementById('icon-compress');
+    const enlargeBtn = document.getElementById('btn-enlarge-player');
+
+    if (!outerContainer || !playerCard) return;
+
+    if (isVideoEnlarged) {
+      outerContainer.classList.remove('max-w-lg');
+      outerContainer.classList.add('max-w-3xl', 'sm:max-w-4xl');
+
+      playerCard.classList.add('max-h-[calc(100vh-270px)]');
+
+      if (iconExpand) iconExpand.classList.add('hidden');
+      if (iconCompress) iconCompress.classList.remove('hidden');
+      if (enlargeBtn) {
+        enlargeBtn.title = "Compress Video Player";
+        enlargeBtn.setAttribute('aria-label', "Compress Video Player");
+      }
+    } else {
+      outerContainer.classList.remove('max-w-3xl', 'sm:max-w-4xl');
+      outerContainer.classList.add('max-w-lg');
+
+      playerCard.classList.remove('max-h-[calc(100vh-270px)]');
+
+      if (iconExpand) iconExpand.classList.remove('hidden');
+      if (iconCompress) iconCompress.classList.add('hidden');
+      if (enlargeBtn) {
+        enlargeBtn.title = "Enlarge Video Player";
+        enlargeBtn.setAttribute('aria-label', "Enlarge Video Player");
+      }
+    }
   }
 
   function saveStateToLocalStorage() {
@@ -422,15 +491,25 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   }
 
+  let isYTAPILoading = false;
+
   function loadYTAPI() {
     if (window.YT && window.YT.Player) {
-      initPlayer();
+      if (!player) initPlayer();
       return;
     }
+    if (isYTAPILoading) return;
+    isYTAPILoading = true;
+
     const tag = document.createElement('script');
     tag.src = 'https://www.youtube.com/iframe_api';
+    tag.async = true;
     const firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    if (firstScriptTag && firstScriptTag.parentNode) {
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    } else {
+      document.head.appendChild(tag);
+    }
   }
 
   window.onYouTubeIframeAPIReady = function() {
@@ -438,6 +517,7 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
   };
 
   function initPlayer() {
+    if (player) return;
     const currentSong = SONGS[currentIndex] || SONGS[0];
     player = new window.YT.Player('yt-player-container', {
       height: '100%',
@@ -445,7 +525,7 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
       videoId: currentSong.youtubeId,
       playerVars: {
         autoplay: 0,
-        controls: 0,
+        controls: 1,
         modestbranding: 1,
         rel: 0,
         playsinline: 1
@@ -879,6 +959,13 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
       return;
     }
 
+    const enlargeTrigger = e.target.closest('#btn-enlarge-player');
+    if (enlargeTrigger) {
+      e.preventDefault();
+      toggleVideoEnlarge();
+      return;
+    }
+
     const shuffleTrigger = e.target.closest('#btn-shuffle, #drawer-btn-shuffle');
     if (shuffleTrigger) {
       e.preventDefault();
@@ -942,15 +1029,38 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
       return;
     }
 
-    // 4. Next song: ArrowRight or N
-    if (e.code === 'ArrowRight' || e.key === 'n' || e.key === 'N') {
+    // 4. Seek +10 seconds: ArrowRight
+    if (e.code === 'ArrowRight' && !e.shiftKey) {
+      e.preventDefault();
+      if (player && typeof player.getCurrentTime === 'function' && typeof player.seekTo === 'function') {
+        const current = player.getCurrentTime() || 0;
+        const duration = player.getDuration() || 0;
+        const target = Math.min(current + 10, duration);
+        player.seekTo(target, true);
+      }
+      return;
+    }
+
+    // 5. Seek -10 seconds: ArrowLeft
+    if (e.code === 'ArrowLeft' && !e.shiftKey) {
+      e.preventDefault();
+      if (player && typeof player.getCurrentTime === 'function' && typeof player.seekTo === 'function') {
+        const current = player.getCurrentTime() || 0;
+        const target = Math.max(current - 10, 0);
+        player.seekTo(target, true);
+      }
+      return;
+    }
+
+    // 6. Next song: N, ], or Shift+ArrowRight
+    if (e.key === 'n' || e.key === 'N' || e.key === ']' || (e.code === 'ArrowRight' && e.shiftKey)) {
       e.preventDefault();
       if (nextBtn) nextBtn.click();
       return;
     }
 
-    // 5. Previous song: ArrowLeft or J
-    if (e.code === 'ArrowLeft' || e.key === 'j' || e.key === 'J') {
+    // 7. Previous song: B, [, or Shift+ArrowLeft
+    if (e.key === 'b' || e.key === 'B' || e.key === '[' || (e.code === 'ArrowLeft' && e.shiftKey)) {
       e.preventDefault();
       if (prevBtn) prevBtn.click();
       return;
@@ -1003,5 +1113,11 @@ import { PLAYLIST_ID, SONGS } from '../data/songs';
   // Bind clicks to pre-rendered drawer song items
   bindDrawerSongClicks();
   updateTrackInfo();
-  loadYTAPI();
+  
+  // Schedule YouTube API loading asynchronously right after initial paint to optimize page startup
+  if ('requestIdleCallback' in window) {
+    window.requestIdleCallback(() => loadYTAPI(), { timeout: 1200 });
+  } else {
+    setTimeout(loadYTAPI, 50);
+  }
 </script>
