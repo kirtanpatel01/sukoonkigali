@@ -20,6 +20,7 @@
     <!-- Close Button -->
     <div class="absolute top-5 right-5 group">
       <button 
+        type="button"
         id="close-feedback-btn" 
         aria-label="Close form"
         class="text-stone-400/70 hover:text-[#f5f0e1] transition-colors p-1 cursor-pointer focus:outline-none"
@@ -225,10 +226,6 @@
 
           modal.classList.remove('opacity-0', 'pointer-events-none');
           modal.classList.add('opacity-100', 'pointer-events-auto');
-
-          setTimeout(() => {
-            if (songTitleInput) songTitleInput.focus();
-          }, 100);
         }
       }
 
