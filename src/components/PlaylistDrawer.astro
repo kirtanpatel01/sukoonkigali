@@ -99,7 +99,7 @@ import { SONGS } from '../data/songs';
           />
           <div class="checkbox-box w-4 h-4 rounded border border-stone-500/60 group-hover/checkbox:border-[#e2b170] transition-colors flex items-center justify-center bg-black/20">
             <svg class="checkbox-check w-3 h-3 text-[#e2b170] hidden" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/>
             </svg>
           </div>
         </label>
@@ -212,9 +212,10 @@ import { SONGS } from '../data/songs';
         if (!isDrawerOpen) return;
 
         const closeBtn = e.target.closest('#close-drawer-btn');
-        const isOutsideDrawer = !drawer.contains(e.target);
+        const isInsideDrawer = drawer && (drawer.contains(e.target) || (e.composedPath && e.composedPath().includes(drawer)));
+        const isBackdrop = e.target === backdrop || e.target.id === 'drawer-backdrop';
 
-        if (closeBtn || e.target === backdrop || isOutsideDrawer) {
+        if (closeBtn || (isBackdrop && !isInsideDrawer)) {
           closeDrawer();
         }
       });
