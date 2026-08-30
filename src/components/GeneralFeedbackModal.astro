@@ -11,7 +11,7 @@ const feedbackEndpoint = import.meta.env.PUBLIC_FORMSPREE_FEEDBACK_ENDPOINT || '
 <!-- Modal Dialog -->
 <div 
   id="general-feedback-modal" 
-  class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 pointer-events-none opacity-0 transition-all duration-300 ease-in-out"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 pointer-events-none opacity-0 scale-95 transition-all duration-300 ease-out"
   role="dialog"
   aria-modal="true"
   aria-labelledby="general-feedback-title"
@@ -52,17 +52,25 @@ const feedbackEndpoint = import.meta.env.PUBLIC_FORMSPREE_FEEDBACK_ENDPOINT || '
         ✓
       </div>
       <div class="space-y-1.5">
-        <h3 class="font-serif text-2xl text-[#f5f0e1] font-light tracking-wide">
-          Thanks for leaving a note.
+        <h3 class="font-serif text-2xl sm:text-3xl text-[#f5f0e1] font-light tracking-wide">
+          Got it.
         </h3>
-        <p class="font-sans text-xs sm:text-sm text-stone-400 font-light">
-          We appreciate your thoughts.
+        <p class="font-sans text-xs sm:text-sm text-stone-400/90 font-light leading-relaxed">
+          Thanks for leaving a note.
         </p>
       </div>
-      <div class="pt-3">
+      <div class="pt-3 flex flex-col sm:flex-row items-center justify-center gap-2">
+        <button 
+          id="close-general-feedback-success-btn" 
+          type="button"
+          class="w-full sm:w-auto px-5 py-2 rounded-xl bg-[#e2b170] hover:bg-[#ebd09b] text-[#090b10] font-sans font-medium text-xs tracking-wider transition-all cursor-pointer shadow-md"
+        >
+          Close
+        </button>
         <button 
           id="general-feedback-reset-btn" 
-          class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-stone-300 hover:text-[#f5f0e1] font-sans text-xs tracking-wider transition-all cursor-pointer border border-white/10"
+          type="button"
+          class="w-full sm:w-auto px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-stone-300 hover:text-[#f5f0e1] font-sans text-xs tracking-wider transition-all cursor-pointer border border-white/10"
         >
           Leave another note
         </button>
@@ -80,7 +88,7 @@ const feedbackEndpoint = import.meta.env.PUBLIC_FORMSPREE_FEEDBACK_ENDPOINT || '
       <!-- 1. Category Selection Pills -->
       <div class="space-y-2">
         <label class="block text-[10px] font-sans font-medium tracking-wider text-stone-400/80 uppercase">
-          What would you like to share?
+          I'd like to...
         </label>
         <input type="hidden" name="feedback_type" id="general-feedback-type-hidden" value="Loved it" />
         <div class="flex flex-wrap gap-1.5">
@@ -263,7 +271,9 @@ const feedbackEndpoint = import.meta.env.PUBLIC_FORMSPREE_FEEDBACK_ENDPOINT || '
         }
       });
 
+      const closeSuccessBtn = document.getElementById('close-general-feedback-success-btn');
       if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      if (closeSuccessBtn) closeSuccessBtn.addEventListener('click', closeModal);
       if (backdrop) backdrop.addEventListener('click', closeModal);
 
       document.addEventListener('keydown', function(e) {

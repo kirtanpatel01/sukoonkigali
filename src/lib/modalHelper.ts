@@ -18,8 +18,8 @@ export function openModalWithBackdrop(modal: HTMLElement | null, backdrop: HTMLE
   backdrop.classList.remove('opacity-0', 'pointer-events-none');
   backdrop.classList.add('opacity-100', 'pointer-events-auto');
 
-  modal.classList.remove('opacity-0', 'pointer-events-none');
-  modal.classList.add('opacity-100', 'pointer-events-auto');
+  modal.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+  modal.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
 
   if (focusElement) {
     setTimeout(() => focusElement.focus(), 100);
@@ -30,8 +30,8 @@ export function closeModalWithBackdrop(modal: HTMLElement | null, backdrop: HTML
   stopProcessingLoop();
   if (!modal || !backdrop) return;
   playSound('close');
-  modal.classList.remove('opacity-100', 'pointer-events-auto');
-  modal.classList.add('opacity-0', 'pointer-events-none');
+  modal.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+  modal.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
 
   backdrop.classList.remove('opacity-100', 'pointer-events-auto');
   backdrop.classList.add('opacity-0', 'pointer-events-none');

@@ -1,18 +1,19 @@
 ---
+import { SONGS } from '../../data/songs';
 ---
 <!-- Sub Controls: Track Index + Songs Drawer Group, Sound SFX Toggle & Volume Control Slider -->
 <div class="w-full flex items-end justify-between font-sans text-sm sm:text-base text-stone-300/85 pt-1 px-1 z-20">
-  <!-- Unified Stacked Playlist Group (01 / 106 over ☰) -->
+  <!-- Unified Stacked Playlist Group (01 / 239 over ☰) -->
   <div class="relative flex flex-col items-center space-y-0.5">
     <span id="track-index" class="font-sans text-[11px] sm:text-xs tracking-widest text-stone-400/70 font-mono select-none">
-      01 / 106
+      01 / {SONGS.length}
     </span>
 
     <button 
       type="button"
       id="btn-playlist" 
       aria-label="Songs list"
-      class="text-stone-300/80 hover:text-[#e2b170] transition-colors cursor-pointer p-2 focus:outline-none focus:text-[#e2b170] touch-manipulation"
+      class="text-stone-300/80 sm:hover:text-[#e2b170] transition-colors cursor-pointer p-2 focus:outline-none touch-manipulation"
     >
       <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h11"/>
@@ -28,7 +29,7 @@
       id="btn-sfx-toggle" 
       aria-label="Toggle UI sound effects"
       title="UI Sound Effects (ON)"
-      class="text-stone-300/80 hover:text-[#e2b170] transition-colors cursor-pointer p-2 focus:outline-none focus:text-[#e2b170] touch-manipulation"
+      class="text-stone-300/80 sm:hover:text-[#e2b170] transition-colors cursor-pointer p-2 focus:outline-none touch-manipulation"
     >
       <!-- Headphones Sound ON Icon -->
       <svg id="icon-sfx-on" class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
@@ -45,9 +46,9 @@
       type="button"
       id="btn-mute" 
       aria-label="Mute or Unmute"
-      class="font-sans hover:text-[#f5f0e1] transition-colors cursor-pointer p-2 focus:outline-none touch-manipulation"
+      class="font-sans sm:hover:text-[#f5f0e1] transition-colors cursor-pointer p-2 focus:outline-none touch-manipulation"
     >
-      <svg id="icon-volume-high" class="w-4 h-4 text-stone-300/80 hover:text-[#f5f0e1] pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+      <svg id="icon-volume-high" class="w-4 h-4 text-stone-300/80 sm:hover:text-[#f5f0e1] pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M11 5L6 9H2v6h4l5 4V5z"/>
       </svg>
       <svg id="icon-volume-muted" class="w-4 h-4 text-amber-300/90 hidden pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">

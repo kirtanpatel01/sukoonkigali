@@ -1,0 +1,211 @@
+---
+---
+
+<!-- Backdrop Overlay -->
+<div 
+  id="shortcuts-backdrop" 
+  class="fixed inset-0 bg-black/65 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out cursor-pointer"
+></div>
+
+<!-- Modal Dialog -->
+<div 
+  id="shortcuts-modal" 
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 pointer-events-none opacity-0 scale-95 transition-all duration-300 ease-out"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="shortcuts-title"
+>
+  <div class="w-full max-w-lg bg-[#090b10]/95 backdrop-blur-2xl border border-white/15 rounded-2xl shadow-2xl p-6 sm:p-7 text-stone-200 relative max-h-[85vh] sm:max-h-[90vh] overflow-y-auto custom-scrollbar select-none">
+    
+    <!-- Close Button -->
+    <div class="absolute top-5 right-5 group">
+      <button 
+        type="button"
+        id="close-shortcuts-btn" 
+        aria-label="Close shortcuts dialog"
+        class="text-stone-400/70 hover:text-[#f5f0e1] transition-colors p-1 cursor-pointer focus:outline-none"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+      <div class="pointer-events-none absolute -bottom-9 right-0 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-all duration-200 z-30 hidden md:flex items-center space-x-1.5 px-2 py-0.5 rounded-lg bg-[#090b10]/95 backdrop-blur-md border border-white/15 text-[11px] font-sans text-stone-200 shadow-xl whitespace-nowrap">
+        <span>Close</span>
+        <kbd class="px-1.5 py-0.5 rounded text-[10px] bg-white/10 border border-white/20 font-mono text-[#e2b170] uppercase">Esc</kbd>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <div class="flex items-center space-x-3 pr-8 mb-5">
+      <div class="w-9 h-9 rounded-xl bg-[#e2b170]/15 border border-[#e2b170]/30 flex items-center justify-center flex-shrink-0">
+        <span class="font-mono text-sm font-bold text-[#e2b170]">?</span>
+      </div>
+      <div>
+        <h2 id="shortcuts-title" class="font-serif text-2xl sm:text-3xl text-[#f5f0e1] font-light tracking-wide">
+          Keyboard Shortcuts
+        </h2>
+        <p class="font-sans text-xs text-stone-400/90 font-light mt-0.5">
+          Quiet, friction-free navigation for desktop
+        </p>
+      </div>
+    </div>
+
+    <!-- Shortcuts List Grid -->
+    <div class="space-y-2 font-sans text-xs sm:text-sm">
+      
+      <!-- Playback Controls -->
+      <div class="p-3 rounded-xl bg-white/[0.03] border border-white/5 space-y-2.5">
+        <div class="flex items-center justify-between">
+          <span class="text-stone-300 font-light">Play / Pause</span>
+          <div class="flex items-center space-x-1">
+            <kbd class="px-2 py-0.5 rounded bg-white/10 border border-white/20 font-mono text-xs text-[#e2b170]">Space</kbd>
+            <span class="text-stone-500 text-[10px]">or</span>
+            <kbd class="px-1.5 py-0.5 rounded bg-white/10 border border-white/20 font-mono text-xs text-[#e2b170]">K</kbd>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between border-t border-white/5 pt-2">
+          <span class="text-stone-300 font-light">Seek 10s Backward / Forward</span>
+          <div class="flex items-center space-x-1">
+            <kbd class="px-1.5 py-0.5 rounded bg-white/10 border border-white/20 font-mono text-xs text-[#e2b170]">←</kbd>
+            <kbd class="px-1.5 py-0.5 rounded bg-white/10 border border-white/20 font-mono text-xs text-[#e2b170]">→</kbd>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between border-t border-white/5 pt-2">
+          <span class="text-stone-300 font-light">Next Track</span>
+          <div class="flex items-center space-x-1">
+            <kbd class="px-1.5 py-0.5 rounded bg-white/10 border border-white/20 font-mono text-xs text-[#e2b170]">N</kbd>
+            <span class="text-stone-500 text-[10px]">or</span>
+            <kbd class="px-1.5 py-0.5 rounded bg-white/10 border border-white/20 font-mono text-xs text-[#e2b170]">]</kbd>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between border-t border-white/5 pt-2">
+          <span class="text-stone-300 font-light">Previous Track</span>
+          <div class="flex items-center space-x-1">
+            <kbd class="px-1.5 py-0.5 rounded bg-white/10 border border-white/20 font-mono text-xs text-[#e2b170]">B</kbd>
+            <span class="text-stone-500 text-[10px]">or</span>
+            <kbd class="px-1.5 py-0.5 rounded bg-white/10 border border-white/20 font-mono text-xs text-[#e2b170]">[</kbd>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mode & Volume Toggles -->
+      <div class="p-3 rounded-xl bg-white/[0.03] border border-white/5 space-y-2.5">
+        <div class="flex items-center justify-between">
+          <span class="text-stone-300 font-light">Toggle Shuffle</span>
+          <kbd class="px-1.5 py-0.5 rounded bg-white/10 border border-white/20 font-mono text-xs text-[#e2b170]">S</kbd>
+        </div>
+
+        <div class="flex items-center justify-between border-t border-white/5 pt-2">
+          <span class="text-stone-300 font-light">Toggle Repeat Track</span>
+          <kbd class="px-1.5 py-0.5 rounded bg-white/10 border border-white/20 font-mono text-xs text-[#e2b170]">R</kbd>
+        </div>
+
+        <div class="flex items-center justify-between border-t border-white/5 pt-2">
+          <span class="text-stone-300 font-light">Mute / Unmute</span>
+          <kbd class="px-1.5 py-0.5 rounded bg-white/10 border border-white/20 font-mono text-xs text-[#e2b170]">M</kbd>
+        </div>
+      </div>
+
+      <!-- Panels & Modals -->
+      <div class="p-3 rounded-xl bg-white/[0.03] border border-white/5 space-y-2.5">
+        <div class="flex items-center justify-between">
+          <span class="text-stone-300 font-light">Toggle Songs Queue</span>
+          <kbd class="px-1.5 py-0.5 rounded bg-white/10 border border-white/20 font-mono text-xs text-[#e2b170]">P</kbd>
+        </div>
+
+        <div class="flex items-center justify-between border-t border-white/5 pt-2">
+          <span class="text-stone-300 font-light">Help Shape Sukoon Ki Gali</span>
+          <kbd class="px-1.5 py-0.5 rounded bg-white/10 border border-white/20 font-mono text-xs text-[#e2b170]">F</kbd>
+        </div>
+
+        <div class="flex items-center justify-between border-t border-white/5 pt-2">
+          <span class="text-stone-300 font-light">Toggle Keyboard Shortcuts</span>
+          <kbd class="px-1.5 py-0.5 rounded bg-white/10 border border-white/20 font-mono text-xs text-[#e2b170]">?</kbd>
+        </div>
+
+        <div class="flex items-center justify-between border-t border-white/5 pt-2">
+          <span class="text-stone-300 font-light">Close Open Panels / Modals</span>
+          <kbd class="px-2 py-0.5 rounded bg-white/10 border border-white/20 font-mono text-xs text-[#e2b170]">Esc</kbd>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer Close -->
+    <div class="mt-5 pt-4 border-t border-white/10 flex items-center justify-between">
+      <span class="text-[11px] font-sans text-stone-500 font-light">Bypasses automatically when typing in forms</span>
+      <button 
+        type="button" 
+        id="close-shortcuts-modal-btn"
+        class="px-4 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-stone-300 hover:text-[#f5f0e1] font-sans text-xs tracking-wider transition-all cursor-pointer border border-white/10"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { openModalWithBackdrop, closeModalWithBackdrop } from '../lib/modalHelper';
+
+  (function() {
+    function setupShortcutsModal() {
+      const backdrop = document.getElementById('shortcuts-backdrop');
+      const modal = document.getElementById('shortcuts-modal');
+      const closeBtn = document.getElementById('close-shortcuts-btn');
+      const closeFooterBtn = document.getElementById('close-shortcuts-modal-btn');
+
+      function openShortcuts() {
+        openModalWithBackdrop(modal, backdrop);
+      }
+
+      function closeShortcuts() {
+        closeModalWithBackdrop(modal, backdrop);
+      }
+
+      document.addEventListener('click', function(e: MouseEvent) {
+        const target = e.target as HTMLElement | null;
+        if (!target) return;
+
+        if (target.closest('#open-shortcuts-btn') || target.closest('.open-shortcuts-trigger')) {
+          e.preventDefault();
+          openShortcuts();
+        } else if (target.closest('#close-shortcuts-btn') || target.closest('#close-shortcuts-modal-btn') || target === backdrop) {
+          closeShortcuts();
+        }
+      });
+
+      document.addEventListener('keydown', function(e: KeyboardEvent) {
+        const active = document.activeElement as HTMLElement | null;
+        const isTyping = active && (
+          active.tagName === 'INPUT' ||
+          active.tagName === 'TEXTAREA' ||
+          active.tagName === 'SELECT' ||
+          active.isContentEditable ||
+          active.closest('input, textarea, select, [contenteditable]')
+        );
+
+        if (isTyping) return;
+
+        if (e.key === '?' || (e.key === '/' && e.shiftKey)) {
+          e.preventDefault();
+          const isOpen = modal && modal.classList.contains('opacity-100');
+          if (isOpen) {
+            closeShortcuts();
+          } else {
+            openShortcuts();
+          }
+        }
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupShortcutsModal);
+    } else {
+      setupShortcutsModal();
+    }
+  })();
+</script>

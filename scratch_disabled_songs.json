@@ -1,0 +1,80 @@
+[
+  {
+    "youtubeId": "invalid_fake_id_test_999",
+    "title": "Tum Mile (Unavailable Video Test)",
+    "artist": "Neeraj Shridhar",
+    "statusCode": 400
+  },
+  {
+    "youtubeId": "BWLYFc9MDFI",
+    "title": "Aap Ki Nazron Ne Samjha",
+    "artist": "Sanam",
+    "statusCode": 401
+  },
+  {
+    "youtubeId": "LTZ7j0fEThk",
+    "title": "Abhi Na Jaao Chhod Kar",
+    "artist": "Mohammed Rafi, Asha Bhosle",
+    "statusCode": 401
+  },
+  {
+    "youtubeId": "9yGC2WNhA0A",
+    "title": "Ae Kash Ke Hum",
+    "artist": "Sanam",
+    "statusCode": 401
+  },
+  {
+    "youtubeId": "XKbiIahG6ok",
+    "title": "Ek Ladki Ko Dekha",
+    "artist": "Sanam",
+    "statusCode": 401
+  },
+  {
+    "youtubeId": "eVv8rcMEMuM",
+    "title": "Ek Pyar Ka Nagma",
+    "artist": "Sanam",
+    "statusCode": 401
+  },
+  {
+    "youtubeId": "DtAijYxUi74",
+    "title": "Humein Tumse Pyar Kitna",
+    "artist": "Sanam",
+    "statusCode": 401
+  },
+  {
+    "youtubeId": "XvlS-oM1ORg",
+    "title": "Jaane Woh Kaise",
+    "artist": "Sanam",
+    "statusCode": 401
+  },
+  {
+    "youtubeId": "HnLtNrvfZTU",
+    "title": "Lag Jaa Gale",
+    "artist": "Sanam",
+    "statusCode": 401
+  },
+  {
+    "youtubeId": "M6Ul3ASaFLU",
+    "title": "Mere Mehboob Qayamat Hogi",
+    "artist": "Sanam",
+    "statusCode": 401
+  },
+  {
+    "youtubeId": "vFN3eNe0_Hs",
+    "title": "Pehla Nasha",
+    "artist": "Sanam",
+    "statusCode": 401
+  },
+  {
+    "youtubeId": "uyzUJwWg9yM",
+    "title": "Tujhse Naraz Nahi Zindagi",
+    "artist": "Sanam",
+    "statusCode": 401
+  },
+  {
+    "youtubeId": "4HRC6c5-2lQ",
+    "title": "Yeh Raaten Yeh Mausam",
+    "artist": "Sanam",
+    "statusCode": 401
+  }
+]

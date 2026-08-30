@@ -1,0 +1,37 @@
+---
+---
+<!-- Up Next & Quick Queue Preview Bar -->
+<div 
+  id="up-next-card"
+  class="w-full mt-3 px-3.5 py-2 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 backdrop-blur-md transition-all duration-300 flex items-center justify-between group cursor-pointer shadow-lg select-none"
+  title="Open Songs Queue"
+>
+  <!-- Left: UP NEXT Badge -->
+  <div class="flex items-center space-x-2 flex-shrink-0">
+    <span class="w-2 h-2 rounded-full bg-[#e2b170] animate-pulse"></span>
+    <span class="text-xs font-mono text-[#e2b170] font-semibold tracking-widest uppercase">UP NEXT</span>
+  </div>
+
+  <!-- Center: Song Title Centered -->
+  <div class="flex-1 min-w-0 text-center px-3">
+    <p id="up-next-title" class="font-serif text-sm sm:text-base text-[#f5f0e1] font-normal group-hover:text-[#e2b170] transition-colors truncate">
+      Loading next track...
+    </p>
+  </div>
+
+  <!-- Right: Time Remaining & Queue Shortcut -->
+  <div class="flex items-center space-x-2.5 flex-shrink-0">
+    <span id="up-next-time-rem" class="font-mono text-xs text-stone-300/90"></span>
+    <button
+      type="button"
+      id="btn-open-queue-shortcut"
+      class="text-xs sm:text-sm font-sans text-stone-300/90 group-hover:text-[#e2b170] transition-colors flex items-center space-x-1 pl-2.5 border-l border-white/15 focus:outline-none"
+      aria-label="Open Queue Drawer"
+    >
+      <span>Queue</span>
+      <svg class="w-3.5 h-3.5 text-stone-400 group-hover:text-[#e2b170] transition-colors" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/>
+      </svg>
+    </button>
+  </div>
+</div>
