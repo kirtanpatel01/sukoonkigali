@@ -12,7 +12,7 @@ import { SONGS } from '../data/songs';
 const pageTitle = "Sukoon Ki Gali";
 const pageDescription = "A quiet corner of the internet with a peaceful collection of curated songs for when you need to slow down.";
 const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://sukoonkigali.kjpatel.me').href;
-const ogImageURL = new URL('/og.png', Astro.site || 'https://sukoonkigali.kjpatel.me').href;
+const ogImageURL = new URL('/og.jpg', Astro.site || 'https://sukoonkigali.kjpatel.me').href;
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -80,6 +80,7 @@ const structuredData = {
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
+    <meta property="og:site_name" content="Sukoon Ki Gali" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDescription} />
     <meta property="og:image" content={ogImageURL} />
